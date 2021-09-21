@@ -6,27 +6,31 @@ public class Main : MonoBehaviour
 {
 
     // Prefabs
-    [SerializeField] private Transform tilePrefab;
+    [SerializeField] private Transform octagonPrefab;
     [SerializeField] private Transform squarePrefab;
 
     // Sprites
-    [SerializeField] private Sprite[] tileSprites;
+    [SerializeField] private Sprite[] octagonSprites;
     [SerializeField] private Sprite[] squareSprites;
 
-    // Height and width of individual tiles
-    const float TILE_HEIGHT = 0.72f;
-    const float TILE_WIDTH = 0.72f;
+    // Distance between centers of tiles
+    [SerializeField] const float TILE_HEIGHT = 0.72f;
+    [SerializeField] const float TILE_WIDTH = 0.72f;
 
-    // Side lengths of grid, makes a hexagon shaped board
-    const int GRID_WIDTH = 11;
-    const int GRID_HEIGHT = 13;
+    // Side lengths of grid, makes an irreregular hexagon shaped board
+    [SerializeField] const int GRID_WIDTH = 11;
+    [SerializeField] const int GRID_HEIGHT = 13;
+
+    // Dictionaries for octagons and squares, keys are their positions on a diagonal grid with 0,0 being the top left (used i + j from spawnGrid() to create these coordinates)
+    public Dictionary<Vector2, Octagon> octagons = new Dictionary<Vector2, Octagon>();
+    public Dictionary<Vector2, Square>  squares  = new Dictionary<Vector2, Square>();
 
     // Start is called before the first frame update
     void Start()
     {
 
-        // Instantiate tiles, octagons and squares
-        // Board centered at 0,0
+        // Instantiate octagons and squares
+        // Board centered at global position 0,0,0
         for (int i = 0; i < GRID_HEIGHT; i++)
         {
 
@@ -36,10 +40,10 @@ public class Main : MonoBehaviour
             for (int j = 0; j < width; j++)
             {
 
-                Transform tile = Instantiate(tilePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT)), Quaternion.identity);
+                octagons.Add(new Vector2(i, j), Instantiate(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT)), Quaternion.identity).gameObject.GetComponent<Octagon>());
 
                 // Assign random sprite to tiles
-                tile.GetComponent<SpriteRenderer>().sprite = tileSprites[Random.Range(0, tileSprites.Length)];
+                octagons[new Vector2(i, j)].gameObject.GetComponent<SpriteRenderer>().sprite = octagonSprites[Random.Range(0, octagonSprites.Length)];
 
                 // Spawn squares in specific spots
                 if (i != 0)
