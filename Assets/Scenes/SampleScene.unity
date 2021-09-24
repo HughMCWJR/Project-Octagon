@@ -160,8 +160,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e0d90222cd48c964c891b16437efb239, type: 3}
   - {fileID: 21300000, guid: 1ad4b77353e5746498a5add436f07b35, type: 3}
   squareSprites:
-  - {fileID: 21300000, guid: c16a632b644622746b9f8801fbfc91ba, type: 3}
   - {fileID: 21300000, guid: 46d57ed2849af834482ddc126adcc26e, type: 3}
+  - {fileID: 21300000, guid: c16a632b644622746b9f8801fbfc91ba, type: 3}
 --- !u!81 &2142078380
 AudioListener:
   m_ObjectHideFlags: 0
