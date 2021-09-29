@@ -9,6 +9,11 @@ public class Main : MonoBehaviour
     private Player leftPlayer;
     private Player rightPlayer;
 
+    // Constants for team ownership
+    public const int NO_ONE = -1;
+    public const int RIGHT_PLAYER = 0;
+    public const int LEFT_PLAYER = 1;
+
     // Whos turn is it
     private bool leftPlayersTurn = false;
 
@@ -16,19 +21,20 @@ public class Main : MonoBehaviour
     [SerializeField] private Transform octagonPrefab;
     [SerializeField] private Transform squarePrefab;
 
+    // REFACTORED TO OCTAGON AND SQUARE RESPECTIVELY
     // Sprites
-    [SerializeField] private Sprite[] octagonSprites;
-    [SerializeField] private Sprite[] squareSprites;
+    //[SerializeField] private Sprite[] octagonSprites;
+    //[SerializeField] private Sprite[] squareSprites;
 
     // Buttons
     [SerializeField] private GameObject attackButton;
     [SerializeField] private GameObject buildButton;
     [SerializeField] private GameObject nextTurnButton;
 
-    // Constants for types of tiles
+    // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
-    const int MOUNTAIN = 0;
-    const int DESERT   = 1;
+    public const int MOUNTAIN = 0;
+    public const int DESERT   = 1;
 
     // Distance between centers of tiles
     [SerializeField] const float TILE_HEIGHT = 0.72f;
@@ -39,21 +45,22 @@ public class Main : MonoBehaviour
     [SerializeField] const int GRID_HEIGHT = 13;
 
     // Constants for directions
-    const int N  = 0;
-    const int NE = 1;
-    const int E  = 2;
-    const int SE = 3;
-    const int S  = 4;
-    const int SW = 5;
-    const int W  = 6;
-    const int NW = 7;
+    public const int N  = 0;
+    public const int NE = 1;
+    public const int E  = 2;
+    public const int SE = 3;
+    public const int S  = 4;
+    public const int SW = 5;
+    public const int W  = 6;
+    public const int NW = 7;
 
     // Constants for buildings
     // Number of type of buildings
     const int NUM_TYPE_BUILDINGS = 2;
     // Index for each building type
-    const int FACTORY = 0;
-    const int ARMORY = 1;
+    public const int NONE = -1;
+    public const int FACTORY = 0;
+    public const int ARMORY = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -78,15 +85,13 @@ public class Main : MonoBehaviour
             {
 
                 // Octagons are placed left to right, top to bottom
-                octagons.Add(new Vector2(j, i), Instantiate(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT)), Quaternion.identity).gameObject.GetComponent<Octagon>());
-                
-                // Gives octagon this instance of Main
-                octagons[new Vector2(j, i)].setMain(this);
+                octagons.Add(new Vector2(j, i), instantiateTile<Octagon>(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT))));
 
                 // TEMPORARY
                 // OCTAGON TYPE ASSIGNMENT
-                int randType = Random.Range(0, 2);
-                octagons[new Vector2(j, i)].setType(randType, octagonSprites[randType]);
+                int randTerrain = Random.Range(0, 5);
+                randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
+                octagons[new Vector2(j, i)].setTerrain(randTerrain);
 
             }
 
@@ -171,18 +176,16 @@ public class Main : MonoBehaviour
             if (i < GRID_HEIGHT - 2 && hasBothNeighbors)
             {
 
-                Square square = Instantiate(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)), Quaternion.identity).gameObject.GetComponent<Square>();
+                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
 
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
 
-                // Gives square this instance of Main
-                square.setMain(this);
-
                 // TEMPORARY
                 // SQUARE TYPE ASSIGNMENT
-                int randType = Random.Range(0, 2);
-                square.setType(randType, squareSprites[randType]);
+                int randTerrain = Random.Range(0, 5);
+                randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
+                square.setTerrain(randTerrain);
 
             }
 
@@ -205,6 +208,15 @@ public class Main : MonoBehaviour
             }
 
         }
+
+        // Set starting tiles for players
+        octagons[new Vector2(0, middleI)].setOwner(LEFT_PLAYER);
+        octagons[new Vector2(GRID_WIDTH - 1, middleI)].setOwner(RIGHT_PLAYER);
+
+        // TEMP
+        // FIXES EDGE CASE WHERE STARTING OCTAGON IS MOUNATIN
+        octagons[new Vector2(0, middleI)].setTerrain(DESERT);
+        octagons[new Vector2(GRID_WIDTH - 1, middleI)].setTerrain(DESERT);
 
         // Start first turn
         nextTurn();
@@ -256,8 +268,7 @@ public class Main : MonoBehaviour
 
     }
 
-    // See if octagon can be claiemd, if so tell player that octagon has been claimed
-    // @param: octagon being claimed
+    // See if player can claim nuetral octagon, if so tell player that octagon has been claimed
     // @return: true if octagon can be claimed, false otherwise
     public bool tryClaimOctagon()
     {
@@ -278,6 +289,60 @@ public class Main : MonoBehaviour
         }
 
         return true;
+
+    }
+
+    // See if player can attack the claimed octagon, if so tell player that octagon has been attacked
+    // @param: current owner of octagon
+    // @return: true if octagon can be attacked, false otherwise
+    public bool tryAttackOctagon(int owner)
+    {
+
+        if (getCurrentPlayer().getAttacks() == 0)
+        {
+
+            return false;
+
+        }
+
+        // Remove octagon from the owner
+        switch (owner)
+        {
+            case LEFT_PLAYER:
+                leftPlayer.loseOctagon();
+                break;
+            case RIGHT_PLAYER:
+                rightPlayer.loseOctagon();
+                break;
+        }
+
+        // If there are 0 attacks left then set next turn button to active
+        if (getCurrentPlayer().attackedOctagon() == 0)
+        {
+
+            nextTurnButton.SetActive(true);
+
+        }
+
+        return true;
+
+    }
+
+    // Instantiate a tile
+    // @param: object type, prefab to instantiate, vector3 position to instantiate at
+    // @return: object of class of tile
+    private T instantiateTile<T>(Transform prefab, Vector3 position) where T : Tile 
+    {
+
+        T tile = Instantiate(prefab, position, Quaternion.identity).gameObject.GetComponent<T>();
+
+        // Gives tile this instance of Main
+        tile.setMain(this);
+
+        // Each tile starts with no owner
+        tile.setOwner(NO_ONE);
+
+        return tile;
 
     }
 
@@ -354,7 +419,7 @@ public class Main : MonoBehaviour
 
         }
 
-        // Update player after claiming tile
+        // Update player after claiming octagon
         // @return: number of attacks left
         public int claimedOctagon()
         {
@@ -362,6 +427,22 @@ public class Main : MonoBehaviour
             numOctagons++;
 
             return --attacks;
+
+        }
+
+        // Update player after attacking octagon
+        // @return: number of attacks left
+        public int attackedOctagon()
+        {
+
+            return --attacks;
+
+        }
+
+        public void loseOctagon()
+        {
+
+            numOctagons--;
 
         }
 
