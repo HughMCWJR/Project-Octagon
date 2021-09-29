@@ -10,7 +10,7 @@ public class Main : MonoBehaviour
     private Player rightPlayer;
 
     // Whos turn is it
-    private bool leftPlayersTurn = true;
+    private bool leftPlayersTurn = false;
 
     // Prefabs
     [SerializeField] private Transform octagonPrefab;
@@ -20,10 +20,15 @@ public class Main : MonoBehaviour
     [SerializeField] private Sprite[] octagonSprites;
     [SerializeField] private Sprite[] squareSprites;
 
+    // Buttons
+    [SerializeField] private GameObject attackButton;
+    [SerializeField] private GameObject buildButton;
+    [SerializeField] private GameObject nextTurnButton;
+
     // Constants for types of tiles
     // Acts as index for tile sprite arrays
-    const int mountain = 0;
-    const int desert = 0;
+    const int MOUNTAIN = 0;
+    const int DESERT   = 1;
 
     // Distance between centers of tiles
     [SerializeField] const float TILE_HEIGHT = 0.72f;
@@ -42,6 +47,13 @@ public class Main : MonoBehaviour
     const int SW = 5;
     const int W  = 6;
     const int NW = 7;
+
+    // Constants for buildings
+    // Number of type of buildings
+    const int NUM_TYPE_BUILDINGS = 2;
+    // Index for each building type
+    const int FACTORY = 0;
+    const int ARMORY = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +79,9 @@ public class Main : MonoBehaviour
 
                 // Octagons are placed left to right, top to bottom
                 octagons.Add(new Vector2(j, i), Instantiate(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT)), Quaternion.identity).gameObject.GetComponent<Octagon>());
+                
+                // Gives octagon this instance of Main
+                octagons[new Vector2(j, i)].setMain(this);
 
                 // TEMPORARY
                 // OCTAGON TYPE ASSIGNMENT
@@ -158,7 +173,11 @@ public class Main : MonoBehaviour
 
                 Square square = Instantiate(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)), Quaternion.identity).gameObject.GetComponent<Square>();
 
+                // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
+
+                // Gives square this instance of Main
+                square.setMain(this);
 
                 // TEMPORARY
                 // SQUARE TYPE ASSIGNMENT
@@ -188,7 +207,7 @@ public class Main : MonoBehaviour
         }
 
         // Start first turn
-
+        nextTurn();
 
     }
 
@@ -198,21 +217,29 @@ public class Main : MonoBehaviour
 
     }
 
+    // Go to next turn
+    public void nextTurn()
+    {
+
+        nextTurnButton.SetActive(false);
+
+        leftPlayersTurn = !leftPlayersTurn;
+
+        attackButton.SetActive(true);
+        buildButton.SetActive(true);
+
+    }
+
     // Start attack turn for player
     public void startAttackTurn()
     {
 
-        if (leftPlayersTurn)
-        {
+        // Turn off buttons
+        attackButton.SetActive(false);
+        buildButton.SetActive(false);
 
-            leftPlayer.startAttackTurn();
-
-        } else
-        {
-
-            rightPlayer.startAttackTurn();
-
-        }
+        // Tell correct player to start
+        getCurrentPlayer().startAttackTurn();
 
     }
 
@@ -220,18 +247,37 @@ public class Main : MonoBehaviour
     public void startBuildTurn()
     {
 
-        if (leftPlayersTurn)
+        // Turn off buttons
+        attackButton.SetActive(false);
+        buildButton.SetActive(false);
+
+        // Tell correct player to start
+        getCurrentPlayer().startBuildTurn();
+
+    }
+
+    // See if octagon can be claiemd, if so tell player that octagon has been claimed
+    // @param: octagon being claimed
+    // @return: true if octagon can be claimed, false otherwise
+    public bool tryClaimOctagon()
+    {
+
+        if  (getCurrentPlayer().getAttacks() == 0)
         {
 
-            leftPlayer.startBuildTurn();
+            return false;
 
         }
-        else
+
+        // If there are 0 attacks left then set next turn button to active
+        if (getCurrentPlayer().claimedOctagon() == 0)
         {
 
-            rightPlayer.startBuildTurn();
+            nextTurnButton.SetActive(true);
 
         }
+
+        return true;
 
     }
 
@@ -242,26 +288,6 @@ public class Main : MonoBehaviour
 
         tile.addNeighbor(direction, otherTile);
         otherTile.addNeighbor(getOppositeDirection(direction), tile);
-
-    }
-
-    // Set neighbor pairing in both octagons
-    // @param: octagon, other octagon, direction from first octagon to other octagon
-    private void setNeighborOctagon(Octagon octagon, Octagon otherOctagon, int direction)
-    {
-
-        octagon.addNeighborOctagon(direction, otherOctagon);
-        otherOctagon.addNeighborOctagon(getOppositeDirection(direction), octagon);
-
-    }
-
-    // Set neighbor pairing for octagon and square
-    // @param: octagon, square, direction from octagon to square
-    private void setNeighborSquare(Octagon octagon, Square square, int direction)
-    {
-
-        octagon.addNeighborSquare(direction, square);
-        square.addNeighbor(getOppositeDirection(direction), octagon);
 
     }
 
@@ -281,31 +307,73 @@ public class Main : MonoBehaviour
 
     }
 
+    // Returns current player taking turn
+    private Player getCurrentPlayer()
+    {
+        return leftPlayersTurn ? leftPlayer : rightPlayer;
+    }
+
+    // Returns true if current player if leftPlayer, false otherwise
+    public bool getCurrentTurn()
+    {
+        return leftPlayersTurn;
+    }
+
     private class Player
     {
 
+        // If this player is left player
         private bool leftPlayer;
 
-        private int numOctagons = 0;
+        // Number of octagons owened by player
+        private int numOctagons;
 
-        //@param: true if player is left player, false if right player
+        // Array of buildings owned
+        // Meaning of indexes are declared as constants
+        private int[] numBuildings;
+
+        // Number of actions currently available
+        private int attacks;
+        private int builds;
+
         public Player(bool leftPlayer)
         {
+            
             this.leftPlayer = leftPlayer;
+            this.numOctagons = 0;
+            this.numBuildings = new int[NUM_TYPE_BUILDINGS];
+            this.attacks = 0;
+            this.builds = 0;
 
         }
 
         public void startAttackTurn()
         {
 
-            int attacks = numOctagons + 1;
+            attacks = numBuildings[ARMORY] + 1;
 
+        }
+
+        // Update player after claiming tile
+        // @return: number of attacks left
+        public int claimedOctagon()
+        {
+
+            numOctagons++;
+
+            return --attacks;
+
+        }
+
+        public int getAttacks()
+        {
+            return attacks;
         }
 
         public void startBuildTurn()
         {
 
-
+            builds = numBuildings[FACTORY];
 
         }
 
