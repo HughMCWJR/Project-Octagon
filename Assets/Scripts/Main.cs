@@ -187,6 +187,9 @@ public class Main : MonoBehaviour
 
         }
 
+        // Start first turn
+
+
     }
 
     // Update is called once per frame
@@ -195,9 +198,46 @@ public class Main : MonoBehaviour
 
     }
 
+    // Start attack turn for player
+    public void startAttackTurn()
+    {
+
+        if (leftPlayersTurn)
+        {
+
+            leftPlayer.startAttackTurn();
+
+        } else
+        {
+
+            rightPlayer.startAttackTurn();
+
+        }
+
+    }
+
+    // Start build turn for player
+    public void startBuildTurn()
+    {
+
+        if (leftPlayersTurn)
+        {
+
+            leftPlayer.startBuildTurn();
+
+        }
+        else
+        {
+
+            rightPlayer.startBuildTurn();
+
+        }
+
+    }
+
     // Set neighbor pairing in both tiles
     // @param: tile, other tile, direction from first tile to other tile
-    void setNeighbor(Tile tile, Tile otherTile, int direction)
+    private void setNeighbor(Tile tile, Tile otherTile, int direction)
     {
 
         tile.addNeighbor(direction, otherTile);
@@ -207,7 +247,7 @@ public class Main : MonoBehaviour
 
     // Set neighbor pairing in both octagons
     // @param: octagon, other octagon, direction from first octagon to other octagon
-    void setNeighborOctagon(Octagon octagon, Octagon otherOctagon, int direction)
+    private void setNeighborOctagon(Octagon octagon, Octagon otherOctagon, int direction)
     {
 
         octagon.addNeighborOctagon(direction, otherOctagon);
@@ -217,7 +257,7 @@ public class Main : MonoBehaviour
 
     // Set neighbor pairing for octagon and square
     // @param: octagon, square, direction from octagon to square
-    void setNeighborSquare(Octagon octagon, Square square, int direction)
+    private void setNeighborSquare(Octagon octagon, Square square, int direction)
     {
 
         octagon.addNeighborSquare(direction, square);
@@ -227,7 +267,7 @@ public class Main : MonoBehaviour
 
     // Get opposite direction
     // @param: direction to find opposite of
-    int getOppositeDirection(int direction)
+    private int getOppositeDirection(int direction)
     {
 
         int oppDir = direction + 4;
@@ -240,4 +280,35 @@ public class Main : MonoBehaviour
         return oppDir - 8;
 
     }
+
+    private class Player
+    {
+
+        private bool leftPlayer;
+
+        private int numOctagons = 0;
+
+        //@param: true if player is left player, false if right player
+        public Player(bool leftPlayer)
+        {
+            this.leftPlayer = leftPlayer;
+
+        }
+
+        public void startAttackTurn()
+        {
+
+            int attacks = numOctagons + 1;
+
+        }
+
+        public void startBuildTurn()
+        {
+
+
+
+        }
+
+    }
+
 }
