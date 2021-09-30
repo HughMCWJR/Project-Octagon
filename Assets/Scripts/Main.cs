@@ -36,8 +36,10 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject buildButton;
     [SerializeField] private GameObject nextTurnButton;
 
-    // Display Text
+    // TEMP
+    // DISPLAY TEXT
     [SerializeField] private Text movesLeftText;
+    [SerializeField] private Text whosTurnText;
 
     // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
@@ -247,6 +249,8 @@ public class Main : MonoBehaviour
         //nextTurnButton.SetActive(false);
 
         leftPlayersTurn = !leftPlayersTurn;
+
+        whosTurnText.text = leftPlayersTurn ? "Blue's Turn" : "Red's Turn";
 
         attackButton.SetActive(true);
         buildButton.SetActive(true);
