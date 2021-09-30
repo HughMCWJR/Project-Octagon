@@ -10,7 +10,7 @@ public class Octagon : Tile
     private List<int> octagonNeighbors = new List<int>();
     private List<int> squareNeighbors  = new List<int>();
 
-    // Called every frame mouse if over, used for checking is clicked
+    // Called every frame mouse if over, used for checking if clicked
     void OnMouseOver()
     {
 
@@ -51,7 +51,7 @@ public class Octagon : Tile
                     }
 
                 }
-                else
+                else if (owner != attackingPlayer)
                 {
 
                     if (main.tryAttackOctagon(owner))
@@ -96,7 +96,7 @@ public class Octagon : Tile
     }
 
     // Set owner of this tile and change tint of child tile
-    public override void setOwner(int newOwner)
+    public override void setOwner(int newOwner, bool firstTurn = false)
     {
 
         owner = newOwner;

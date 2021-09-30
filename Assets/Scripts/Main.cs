@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
@@ -9,13 +10,17 @@ public class Main : MonoBehaviour
     private Player leftPlayer;
     private Player rightPlayer;
 
-    // Constants for team ownership
+    // Constants for player ownership
     public const int NO_ONE = -1;
     public const int RIGHT_PLAYER = 0;
     public const int LEFT_PLAYER = 1;
 
+    // 1 + Number of players who have unique sprites for buildings
+    // The additional 1 is because no one owning the building is counted as a player
+    public const int PLAYER_COUNT = 3;
+
     // Whos turn is it
-    private bool leftPlayersTurn = false;
+    [SerializeField] private bool leftPlayersTurn = false;
 
     // Prefabs
     [SerializeField] private Transform octagonPrefab;
@@ -30,6 +35,9 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject attackButton;
     [SerializeField] private GameObject buildButton;
     [SerializeField] private GameObject nextTurnButton;
+
+    // Display Text
+    [SerializeField] private Text movesLeftText;
 
     // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
@@ -57,7 +65,7 @@ public class Main : MonoBehaviour
     // Constants for buildings
     // Number of type of buildings
     const int NUM_TYPE_BUILDINGS = 2;
-    // Index for each building type
+    // Index for each building type in sprite array
     public const int NONE = -1;
     public const int FACTORY = 0;
     public const int ARMORY = 1;
@@ -181,6 +189,9 @@ public class Main : MonoBehaviour
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
 
+                // Set square to have no building on it
+                square.setBuilding(NONE);
+
                 // TEMPORARY
                 // SQUARE TYPE ASSIGNMENT
                 int randTerrain = Random.Range(0, 5);
@@ -233,7 +244,7 @@ public class Main : MonoBehaviour
     public void nextTurn()
     {
 
-        nextTurnButton.SetActive(false);
+        //nextTurnButton.SetActive(false);
 
         leftPlayersTurn = !leftPlayersTurn;
 
@@ -253,6 +264,9 @@ public class Main : MonoBehaviour
         // Tell correct player to start
         getCurrentPlayer().startAttackTurn();
 
+        //TEMP
+        movesLeftText.text = getCurrentPlayer().getAttacks().ToString();
+
     }
 
     // Start build turn for player
@@ -265,6 +279,9 @@ public class Main : MonoBehaviour
 
         // Tell correct player to start
         getCurrentPlayer().startBuildTurn();
+
+        //TEMP
+        movesLeftText.text = getCurrentPlayer().getBuilds().ToString();
 
     }
 
@@ -280,8 +297,13 @@ public class Main : MonoBehaviour
 
         }
 
+        int attacksLeft = getCurrentPlayer().attackedOctagon();
+
+        //TEMP
+        movesLeftText.text = attacksLeft.ToString();
+
         // If there are 0 attacks left then set next turn button to active
-        if (getCurrentPlayer().claimedOctagon() == 0)
+        if (attacksLeft == 0)
         {
 
             nextTurnButton.SetActive(true);
@@ -316,8 +338,13 @@ public class Main : MonoBehaviour
                 break;
         }
 
+        int attacksLeft = getCurrentPlayer().attackedOctagon();
+
+        //TEMP
+        movesLeftText.text = attacksLeft.ToString();
+
         // If there are 0 attacks left then set next turn button to active
-        if (getCurrentPlayer().attackedOctagon() == 0)
+        if (attacksLeft == 0)
         {
 
             nextTurnButton.SetActive(true);
@@ -325,6 +352,50 @@ public class Main : MonoBehaviour
         }
 
         return true;
+
+    }
+
+    public bool tryBuild(int building)
+    {
+
+        if (getCurrentPlayer().getBuilds() == 0)
+        {
+
+            return false;
+
+        }
+
+        int buildsLeft = getCurrentPlayer().built(building);
+
+        //TEMP
+        movesLeftText.text = buildsLeft.ToString();
+
+        // If there are 0 builds left then set next turn button to active
+        if (buildsLeft == 0)
+        {
+
+            nextTurnButton.SetActive(true);
+
+        }
+
+        return true;
+
+    }
+
+    // Update building count for player
+    // @param: player that needs to be updated, what building, true if building increasing by 1 and false if decreasing by one
+    public void updateBuildingCount(int player, int building, bool increase)
+    {
+
+        switch (player)
+        {
+            case LEFT_PLAYER:
+                leftPlayer.changeBuildingCount(building, increase);
+                break;
+            case RIGHT_PLAYER:
+                rightPlayer.changeBuildingCount(building, increase);
+                break;
+        }
 
     }
 
@@ -340,7 +411,7 @@ public class Main : MonoBehaviour
         tile.setMain(this);
 
         // Each tile starts with no owner
-        tile.setOwner(NO_ONE);
+        tile.setOwner(NO_ONE, true);
 
         return tile;
 
@@ -419,6 +490,13 @@ public class Main : MonoBehaviour
 
         }
 
+        public void startBuildTurn()
+        {
+
+            builds = numBuildings[FACTORY] + 1;
+
+        }
+
         // Update player after claiming octagon
         // @return: number of attacks left
         public int claimedOctagon()
@@ -439,6 +517,17 @@ public class Main : MonoBehaviour
 
         }
 
+        // Update player after building a building
+        // @return: number of builds left
+        public int built(int building)
+        {
+
+            numBuildings[building]++;
+
+            return --builds;
+
+        }
+
         public void loseOctagon()
         {
 
@@ -451,11 +540,16 @@ public class Main : MonoBehaviour
             return attacks;
         }
 
-        public void startBuildTurn()
+        public int getBuilds()
         {
+            return builds;
+        }
 
-            builds = numBuildings[FACTORY];
-
+        // Increase or decrease building count by 1
+        // @param: which building, increase of decrease
+        public void changeBuildingCount(int building, bool increase)
+        {
+            numBuildings[building] += increase ? 1 : -1;
         }
 
     }

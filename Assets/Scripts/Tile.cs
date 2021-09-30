@@ -54,13 +54,16 @@ public class Tile : MonoBehaviour
         this.terrain = terrain;
     }
 
-    public virtual void setOwner(int newOwner)
+    public virtual void setOwner(int newOwner, bool firstTurn = false)
     {
 
         owner = newOwner;
 
         SpriteRenderer srend = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
+        // TEMP
+        // MAY ALTER TINTING
+        // REMEMBER THIS METHOD IS OVERRIDED IN OCTAGON AND SQUARE
         switch (owner)
         {
             case Main.NO_ONE:
