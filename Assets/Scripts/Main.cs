@@ -240,6 +240,29 @@ public class Main : MonoBehaviour
     void Update()
     {
 
+        // Checks for inputs
+        if (Input.GetKey("escape"))
+        {
+
+            Application.Quit();
+
+        } else if (Input.GetKeyDown("space"))
+        {
+
+            nextTurn();
+
+        } else if (Input.GetKeyDown("a"))
+        {
+
+            startAttackTurn();
+
+        } else if (Input.GetKeyDown("b"))
+        {
+
+            startBuildTurn();
+
+        }
+
     }
 
     // Go to next turn
@@ -261,15 +284,21 @@ public class Main : MonoBehaviour
     public void startAttackTurn()
     {
 
-        // Turn off buttons
-        attackButton.SetActive(false);
-        buildButton.SetActive(false);
+        // Only start turn if buttons are on
+        if (attackButton.activeSelf)
+        {
 
-        // Tell correct player to start
-        getCurrentPlayer().startAttackTurn();
+            // Turn off buttons
+            attackButton.SetActive(false);
+            buildButton.SetActive(false);
 
-        //TEMP
-        movesLeftText.text = getCurrentPlayer().getAttacks().ToString();
+            // Tell correct player to start
+            getCurrentPlayer().startAttackTurn();
+
+            //TEMP
+            movesLeftText.text = getCurrentPlayer().getAttacks().ToString();
+
+        }
 
     }
 
@@ -277,15 +306,21 @@ public class Main : MonoBehaviour
     public void startBuildTurn()
     {
 
-        // Turn off buttons
-        attackButton.SetActive(false);
-        buildButton.SetActive(false);
+        // Only start turn if buttons are on
+        if (attackButton.activeSelf)
+        {
 
-        // Tell correct player to start
-        getCurrentPlayer().startBuildTurn();
+            // Turn off buttons
+            attackButton.SetActive(false);
+            buildButton.SetActive(false);
 
-        //TEMP
-        movesLeftText.text = getCurrentPlayer().getBuilds().ToString();
+            // Tell correct player to start
+            getCurrentPlayer().startBuildTurn();
+
+            //TEMP
+            movesLeftText.text = getCurrentPlayer().getBuilds().ToString();
+
+        }
 
     }
 
