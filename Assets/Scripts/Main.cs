@@ -51,8 +51,8 @@ public class Main : MonoBehaviour
     [SerializeField] const float TILE_WIDTH = 0.72f;
 
     // Side lengths of grid, makes an irreregular hexagon shaped board
-    [SerializeField] const int GRID_WIDTH = 11;
-    [SerializeField] const int GRID_HEIGHT = 13;
+    [SerializeField] const int GRID_WIDTH = 12;
+    [SerializeField] const int GRID_HEIGHT = 23;
 
     // Constants for directions
     public const int N  = 0;

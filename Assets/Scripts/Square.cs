@@ -30,20 +30,7 @@ public class Square : Tile
             int buildingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
 
             // Check that building player has square surrounded
-            bool surrounded = true;
-
-            foreach (KeyValuePair<int, Tile> tile in neighbors)
-            {
-
-                if (tile.Value.getOwner() != buildingPlayer)
-                {
-
-                    surrounded = false;
-                    break;
-
-                }
-
-            }
+            bool surrounded = checkSurrounded() == buildingPlayer;
 
             if (surrounded)
             {
@@ -83,52 +70,110 @@ public class Square : Tile
     public void checkOwnership()
     {
 
-        // Go through each neighbor and count how many neighbors each player owns
-        Dictionary<int, int> ownedPerPlayer = new Dictionary<int, int>();
+        // If square has no building, then only set ownership if completely surrounded
+        // Otherwise show ownership to player who owns most surrounding Octagons
+        if (building == Main.NONE)
+        {
+
+            setOwner(checkSurrounded());
+
+        } else
+        {
+
+            // Go through each neighbor and count how many neighbors each player owns
+            Dictionary<int, int> ownedPerPlayer = new Dictionary<int, int>();
+
+            foreach (KeyValuePair<int, Tile> tile in neighbors)
+            {
+
+                int player = tile.Value.getOwner();
+
+                if (ownedPerPlayer.ContainsKey(player))
+                {
+
+                    ownedPerPlayer[player]++;
+
+                }
+                else
+                {
+
+                    ownedPerPlayer.Add(player, 1);
+
+                }
+
+            }
+
+            // Now it goes through each player and sees which player owns the most
+            int maxOwned = -1;
+            int indexOfMax = Main.NO_ONE;
+
+            foreach (KeyValuePair<int, int> player in ownedPerPlayer)
+            {
+
+                if (player.Value > maxOwned)
+                {
+
+                    maxOwned = player.Value;
+                    indexOfMax = player.Key;
+
+                }
+                else if (player.Value == maxOwned)
+                {
+
+                    maxOwned = -1;
+                    indexOfMax = Main.NO_ONE;
+
+                }
+
+            }
+
+            // Applies which player owns it
+            setOwner(indexOfMax);
+
+        }
+
+    }
+
+    // Find player that surrounds square, returns Main.NO_ONE if no one does
+    private int checkSurrounded()
+    {
+
+        int possiblePlayer = Main.NO_ONE;
+
+        bool surrounded = true;
 
         foreach (KeyValuePair<int, Tile> tile in neighbors)
         {
 
-            int player = tile.Value.getOwner();
+            if (tile.Value.getOwner() == Main.NO_ONE)
+            {
 
-            if (ownedPerPlayer.ContainsKey(player)) {
+                surrounded = false;
+                break;
 
-                ownedPerPlayer[player]++;
+            }
+
+            if (possiblePlayer == Main.NO_ONE)
+            {
+
+                possiblePlayer = tile.Value.getOwner();
 
             } else
             {
 
-                ownedPerPlayer.Add(player, 1);
+                if (tile.Value.getOwner() != possiblePlayer)
+                {
+
+                    surrounded = false;
+                    break;
+
+                }
 
             }
 
         }
 
-        // Now it goes through each player and sees which player owns the most
-        int maxOwned = -1;
-        int indexOfMax = Main.NO_ONE;
-
-        foreach (KeyValuePair<int, int> player in ownedPerPlayer)
-        {
-
-            if (player.Value > maxOwned)
-            {
-
-                maxOwned   = player.Value;
-                indexOfMax = player.Key;
-
-            } else if (player.Value == maxOwned)
-            {
-
-                maxOwned   = -1;
-                indexOfMax = Main.NO_ONE;
-
-            }
-
-        }
-
-        // Applies which player owns it
-        setOwner(indexOfMax);
+        return surrounded ? possiblePlayer : Main.NO_ONE;
 
     }
 
