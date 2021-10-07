@@ -50,10 +50,10 @@ public class Square : Tile
                 else if (Input.GetMouseButtonDown(0))
                 {
 
-                    if (main.tryBuild(Main.ARMORY))
+                    if (main.tryBuild(Main.BARRACKS))
                     {
                         
-                        setBuilding(Main.ARMORY);
+                        setBuilding(Main.BARRACKS);
 
                     }
 

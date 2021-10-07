@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,11 +27,6 @@ public class Main : MonoBehaviour
     [SerializeField] private Transform octagonPrefab;
     [SerializeField] private Transform squarePrefab;
 
-    // REFACTORED TO OCTAGON AND SQUARE RESPECTIVELY
-    // Sprites
-    //[SerializeField] private Sprite[] octagonSprites;
-    //[SerializeField] private Sprite[] squareSprites;
-
     // Buttons
     [SerializeField] private GameObject attackButton;
     [SerializeField] private GameObject buildButton;
@@ -40,6 +36,10 @@ public class Main : MonoBehaviour
     // DISPLAY TEXT
     [SerializeField] private Text movesLeftText;
     [SerializeField] private Text whosTurnText;
+
+    // Octagons
+    // Key is position with x being from left side of layer, y being layers top to bottom
+    private Dictionary<Vector2, Octagon> octagons;
 
     // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
@@ -70,7 +70,19 @@ public class Main : MonoBehaviour
     // Index for each building type in sprite array
     public const int NONE = -1;
     public const int FACTORY = 0;
-    public const int ARMORY = 1;
+    public const int BARRACKS = 1;
+
+    // Names of maps to be loaded
+    // Text files are layed out in two lines, first for octagons, second for squares
+    // The strings are written in order of how the tiles are instantiated
+    private readonly string[] mapNames = new string[] {"desert"};
+
+    // Dictionary for maps
+    private Dictionary<string, string[]> maps;
+
+    // Constants for map indexes
+    const int OCTAGON = 0;
+    const int SQUARE  = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -81,7 +93,7 @@ public class Main : MonoBehaviour
         rightPlayer = new Player(false);
 
         // Dictionary for octagons, keys are their positions on a diagonal grid with 0,0 being the top left (used j and i from spawnGrid() to create these coordinates)
-        Dictionary<Vector2, Octagon> octagons = new Dictionary<Vector2, Octagon>();
+        octagons = new Dictionary<Vector2, Octagon>();
 
         // Instantiate octagons and squares
         // Board centered at global position 0,0,0
@@ -99,9 +111,9 @@ public class Main : MonoBehaviour
 
                 // TEMPORARY
                 // OCTAGON TYPE ASSIGNMENT
-                int randTerrain = Random.Range(0, 5);
-                randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
-                octagons[new Vector2(j, i)].setTerrain(randTerrain);
+                //int randTerrain = Random.Range(0, 5);
+                //randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
+                //octagons[new Vector2(j, i)].setTerrain(randTerrain);
 
             }
 
@@ -196,9 +208,9 @@ public class Main : MonoBehaviour
 
                 // TEMPORARY
                 // SQUARE TYPE ASSIGNMENT
-                int randTerrain = Random.Range(0, 5);
-                randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
-                square.setTerrain(randTerrain);
+                //int randTerrain = Random.Range(0, 5);
+                //randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
+                //square.setTerrain(randTerrain);
 
             }
 
@@ -230,6 +242,12 @@ public class Main : MonoBehaviour
         // FIXES EDGE CASE WHERE STARTING OCTAGON IS MOUNATIN
         octagons[new Vector2(0, middleI)].setTerrain(DESERT);
         octagons[new Vector2(GRID_WIDTH - 1, middleI)].setTerrain(DESERT);
+
+        // Load map files
+        maps = loadMaps(mapNames);
+
+        // Assign map terrains
+        setMap(mapNames[Random.Range(0, mapNames.Length)]);
 
         // Start first turn
         nextTurn();
@@ -525,7 +543,7 @@ public class Main : MonoBehaviour
         public void startAttackTurn()
         {
 
-            attacks = numBuildings[ARMORY] + 1;
+            attacks = numBuildings[BARRACKS] + 1;
 
         }
 
@@ -589,6 +607,85 @@ public class Main : MonoBehaviour
         public void changeBuildingCount(int building, bool increase)
         {
             numBuildings[building] += increase ? 1 : -1;
+        }
+
+    }
+
+    // Load map text files
+    // @param:  mapNames = Array of String names of maps to be loaded
+    // @return: Dictionary with String keys for Arrays that contain
+    // the String for Octagon terrains and the String for Squares
+    private Dictionary<string, string[]> loadMaps(string[] mapNames)
+    {
+
+        Dictionary<string, string[]> maps = new Dictionary<string, string[]>();
+
+        foreach (string mapName in mapNames)
+        {
+
+            try
+            {
+                // Create an instance of StreamReader to read from a file.
+                // The using statement also closes the StreamReader.
+                using (StreamReader sr = new StreamReader("Assets/Map/" + mapName + ".txt"))
+                {
+
+                    maps.Add(mapName, new string[2]);
+
+                    // Read Octagon tile terrains
+                    maps[mapName][OCTAGON] = sr.ReadLine();
+
+                    // Read Square tile terrains
+                    maps[mapName][SQUARE] = sr.ReadLine();
+
+                }
+
+            }
+            catch
+            {
+                Debug.Log("The map files could not be read");
+            }
+
+        }
+
+        return maps;
+
+    }
+
+    // Set map terrain types to each tile
+    // @param:  mapName = name of map to set it to
+    private void setMap(string mapName)
+    {
+
+        // Index of map string for Octagon and Square terrains
+        int octagonIndex = 0;
+        int squareIndex = 0;
+
+        // Go through every Octagon
+        for (int i = 0; i < GRID_HEIGHT; i++)
+        {
+
+            // Find width of this layer
+            int width = GRID_WIDTH - (Mathf.Abs((GRID_HEIGHT / 2) - i));
+
+            for (int j = 0; j < width; j++)
+            {
+
+                // Set Octagon terrain
+                // Increase octagon index
+                octagons[new Vector2(j, i)].setTerrain(int.Parse(maps[mapName][OCTAGON].Substring(octagonIndex++, 1)));
+
+                // Set Square terrain if Octagon has square below it
+                // Increase square index
+                if (octagons[new Vector2(j, i)].getNeighbors().ContainsKey(S))
+                {
+
+                    octagons[new Vector2(j, i)].getNeighbors()[S].setTerrain(int.Parse(maps[mapName][SQUARE].Substring(squareIndex++, 1)));
+
+                }
+
+            }
+
         }
 
     }
