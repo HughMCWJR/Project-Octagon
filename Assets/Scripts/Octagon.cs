@@ -43,7 +43,7 @@ public class Octagon : Tile
                 if (owner == Main.NO_ONE)
                 {
 
-                    if (main.tryClaimOctagon())
+                    if (main.tryClaimOctagon(findAttacksNeededToClaim()))
                     {
 
                         setOwner(attackingPlayer);
@@ -54,7 +54,7 @@ public class Octagon : Tile
                 else if (owner != attackingPlayer)
                 {
 
-                    if (main.tryAttackOctagon(owner))
+                    if (main.tryAttackOctagon(owner, findAttacksNeededToAttack()))
                     {
 
                         setOwner(Main.NO_ONE);
@@ -122,6 +122,112 @@ public class Octagon : Tile
             ((Square)neighbors[square]).checkOwnership();
 
         }
+
+    }
+
+    // Find number of attacks needed to claim/attack
+    // Changed by if surrounded by a bunker owned by the enemy
+    public int findAttacksNeededToClaim()
+    {
+
+        int attacksNeeded = 1;
+
+        // Neighbor squares with bunkers
+        Square[] neighborBunkers = findNeighborBuilding(Main.BUNKER);
+
+        // True if there is a neighboring bunker owned by an enemy
+        bool enemyBunker = false;
+
+        foreach (Square square in neighborBunkers)
+        {
+
+            if (square.getOwner() == (main.getCurrentTurn() ? Main.RIGHT_PLAYER : Main.LEFT_PLAYER))
+            {
+
+                enemyBunker = true;
+                break;
+
+            }
+
+        }
+
+        if (enemyBunker)
+        {
+
+            attacksNeeded++;
+
+        }
+
+        return attacksNeeded;
+
+    }
+
+    public int findAttacksNeededToAttack()
+    {
+
+        int attacksNeeded = 1;
+
+        // Neighbor squares with bunkers
+        Square[] neighborBunkers = findNeighborBuilding(Main.BUNKER);
+
+        // True if there is a neighboring bunker owned by an enemy
+        bool enemyBunker = false;
+
+        foreach (Square square in neighborBunkers)
+        {
+
+            if (square.getOwner() == (main.getCurrentTurn() ? Main.RIGHT_PLAYER : Main.LEFT_PLAYER))
+            {
+
+                enemyBunker = true;
+                break;
+
+            }
+
+        }
+
+        if (enemyBunker)
+        {
+
+            attacksNeeded++;
+
+        }
+
+        return attacksNeeded;
+
+    }
+
+    // Return any Squares that have the building being looked for
+    // @param:  building = Integer building
+    // @return: Array of squares that have the building
+    public Square[] findNeighborBuilding(int building)
+    {
+
+        Square[] foundSquares = new Square[4];
+        int numFoundSquares = 0;
+
+        foreach (int square in squareNeighbors)
+        {
+
+            if (((Square)neighbors[square]).getBuilding() == building)
+            {
+
+                foundSquares[numFoundSquares++] = ((Square)neighbors[square]);
+
+            }
+
+        }
+
+        Square[] squares = new Square[numFoundSquares];
+
+        for (int i = 0; i < numFoundSquares; i++)
+        {
+
+            squares[i] = foundSquares[i];
+
+        }
+
+        return squares;
 
     }
 

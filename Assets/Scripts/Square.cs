@@ -36,24 +36,13 @@ public class Square : Tile
             {
 
                 // If clicked, try and build on square if available
-                if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(0))
                 {
 
-                    if (main.tryBuild(Main.FACTORY))
-                    {
-
-                        setBuilding(Main.FACTORY);
-
-                    }
-
-                }
-                else if (Input.GetMouseButtonDown(0))
-                {
-
-                    if (main.tryBuild(Main.BARRACKS))
+                    if (main.tryBuild(main.getChosenBuilding()))
                     {
                         
-                        setBuilding(Main.BARRACKS);
+                        setBuilding(main.getChosenBuilding());
 
                     }
 
@@ -238,6 +227,11 @@ public class Square : Tile
 
         }
 
+    }
+
+    public int getBuilding()
+    {
+        return building;
     }
 
 }

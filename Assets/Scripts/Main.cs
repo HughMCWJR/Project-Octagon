@@ -32,6 +32,9 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject buildButton;
     [SerializeField] private GameObject nextTurnButton;
 
+    // Chosen building for when trying to build
+    private int chosenBuilding;
+
     // TEMP
     // DISPLAY TEXT
     [SerializeField] private Text movesLeftText;
@@ -47,12 +50,15 @@ public class Main : MonoBehaviour
     public const int DESERT   = 1;
 
     // Distance between centers of tiles
-    [SerializeField] const float TILE_HEIGHT = 0.72f;
-    [SerializeField] const float TILE_WIDTH = 0.72f;
+    const float TILE_HEIGHT = 0.72f;
+    const float TILE_WIDTH = 0.72f;
 
     // Side lengths of grid, makes an irreregular hexagon shaped board
-    [SerializeField] const int GRID_WIDTH = 12;
-    [SerializeField] const int GRID_HEIGHT = 23;
+    const int GRID_WIDTH = 12;
+    const int GRID_HEIGHT = 23;
+
+    // Side length of starting square for players
+    const int STARTING_SIZE = 3;
 
     // Constants for directions
     public const int N  = 0;
@@ -66,11 +72,16 @@ public class Main : MonoBehaviour
 
     // Constants for buildings
     // Number of type of buildings
-    const int NUM_TYPE_BUILDINGS = 2;
+    const int NUM_TYPE_BUILDINGS = 5;
     // Index for each building type in sprite array
-    public const int NONE = -1;
-    public const int FACTORY = 0;
-    public const int BARRACKS = 1;
+    public const int NONE     = -1;
+    public const int FACTORY  =  0;
+    public const int BARRACKS =  1;
+    public const int BUNKER   =  2;
+    public const int ARMORY   =  3;
+    public const int MORTAR   =  4;
+    public const int BRIDGE   =  5;
+    public const int RUIN     =  6;
 
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
@@ -92,6 +103,10 @@ public class Main : MonoBehaviour
         leftPlayer  = new Player(true);
         rightPlayer = new Player(false);
 
+        // Set starting value for chosen building
+        // TEMP?
+        chosenBuilding = FACTORY;
+
         // Dictionary for octagons, keys are their positions on a diagonal grid with 0,0 being the top left (used j and i from spawnGrid() to create these coordinates)
         octagons = new Dictionary<Vector2, Octagon>();
 
@@ -108,12 +123,6 @@ public class Main : MonoBehaviour
 
                 // Octagons are placed left to right, top to bottom
                 octagons.Add(new Vector2(j, i), instantiateTile<Octagon>(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT))));
-
-                // TEMPORARY
-                // OCTAGON TYPE ASSIGNMENT
-                //int randTerrain = Random.Range(0, 5);
-                //randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
-                //octagons[new Vector2(j, i)].setTerrain(randTerrain);
 
             }
 
@@ -206,12 +215,6 @@ public class Main : MonoBehaviour
                 // Set square to have no building on it
                 square.setBuilding(NONE);
 
-                // TEMPORARY
-                // SQUARE TYPE ASSIGNMENT
-                //int randTerrain = Random.Range(0, 5);
-                //randTerrain = randTerrain == 0 ? MOUNTAIN : DESERT;
-                //square.setTerrain(randTerrain);
-
             }
 
         }
@@ -235,13 +238,30 @@ public class Main : MonoBehaviour
         }
 
         // Set starting tiles for players
-        octagons[new Vector2(0, middleI)].setOwner(LEFT_PLAYER);
-        octagons[new Vector2(GRID_WIDTH - 1, middleI)].setOwner(RIGHT_PLAYER);
+        int tilesThisLayer = STARTING_SIZE;
 
-        // TEMP
-        // FIXES EDGE CASE WHERE STARTING OCTAGON IS MOUNATIN
-        octagons[new Vector2(0, middleI)].setTerrain(DESERT);
-        octagons[new Vector2(GRID_WIDTH - 1, middleI)].setTerrain(DESERT);
+        while (tilesThisLayer != 0)
+        {
+
+            for (int i = 0; i < tilesThisLayer; i++)
+            {
+
+                // Difference between current layer and starting layer
+                int difference = STARTING_SIZE - tilesThisLayer;
+
+                // Set lower layer
+                octagons[new Vector2(i, middleI + difference)].setOwner(LEFT_PLAYER);
+                octagons[new Vector2(GRID_WIDTH - 1 - i - difference, middleI + difference)].setOwner(RIGHT_PLAYER);
+
+                // Set upper layer
+                octagons[new Vector2(i, middleI - difference)].setOwner(LEFT_PLAYER);
+                octagons[new Vector2(GRID_WIDTH - 1 - i - difference, middleI - difference)].setOwner(RIGHT_PLAYER);
+
+            }
+
+            tilesThisLayer--;
+
+        }
 
         // Load map files
         maps = loadMaps(mapNames);
@@ -278,6 +298,31 @@ public class Main : MonoBehaviour
         {
 
             startBuildTurn();
+
+        } else if (Input.GetKeyDown("1"))
+        {
+
+            setChosenBuilding(BARRACKS);
+
+        } else if (Input.GetKeyDown("2"))
+        {
+
+            setChosenBuilding(FACTORY);
+
+        } else if (Input.GetKeyDown("3"))
+        {
+
+            setChosenBuilding(BUNKER);
+
+        } else if (Input.GetKeyDown("4"))
+        {
+
+            setChosenBuilding(ARMORY);
+
+        } else if (Input.GetKeyDown("5"))
+        {
+
+            setChosenBuilding(MORTAR);
 
         }
 
@@ -343,18 +388,19 @@ public class Main : MonoBehaviour
     }
 
     // See if player can claim nuetral octagon, if so tell player that octagon has been claimed
+    // @param:  attacksNeeded = Integer number of needed attacks
     // @return: true if octagon can be claimed, false otherwise
-    public bool tryClaimOctagon()
+    public bool tryClaimOctagon(int attacksNeeded)
     {
 
-        if  (getCurrentPlayer().getAttacks() == 0)
+        if  (getCurrentPlayer().getAttacks() < attacksNeeded)
         {
 
             return false;
 
         }
 
-        int attacksLeft = getCurrentPlayer().attackedOctagon();
+        int attacksLeft = getCurrentPlayer().attackedOctagon(attacksNeeded);
 
         //TEMP
         movesLeftText.text = attacksLeft.ToString();
@@ -372,12 +418,13 @@ public class Main : MonoBehaviour
     }
 
     // See if player can attack the claimed octagon, if so tell player that octagon has been attacked
-    // @param: current owner of octagon
+    // @param:  owner         = current owner of octagon
+    //          attacksNeeded = Integer number of needed attacks
     // @return: true if octagon can be attacked, false otherwise
-    public bool tryAttackOctagon(int owner)
+    public bool tryAttackOctagon(int owner, int attacksNeeded)
     {
 
-        if (getCurrentPlayer().getAttacks() == 0)
+        if (getCurrentPlayer().getAttacks() < attacksNeeded)
         {
 
             return false;
@@ -395,7 +442,7 @@ public class Main : MonoBehaviour
                 break;
         }
 
-        int attacksLeft = getCurrentPlayer().attackedOctagon();
+        int attacksLeft = getCurrentPlayer().attackedOctagon(attacksNeeded);
 
         //TEMP
         movesLeftText.text = attacksLeft.ToString();
@@ -453,6 +500,20 @@ public class Main : MonoBehaviour
                 rightPlayer.changeBuildingCount(building, increase);
                 break;
         }
+
+    }
+
+    private void setChosenBuilding(int building)
+    {
+
+        chosenBuilding = building;
+
+    }
+
+    public  int getChosenBuilding()
+    {
+
+        return chosenBuilding;
 
     }
 
@@ -566,11 +627,13 @@ public class Main : MonoBehaviour
         }
 
         // Update player after attacking octagon
+        // @param:  attackNeeded = Integer number of attacks needed to take the last action
         // @return: number of attacks left
-        public int attackedOctagon()
+        public int attackedOctagon(int attacksNeeded)
         {
 
-            return --attacks;
+            attacks -= attacksNeeded;
+            return attacks;
 
         }
 
