@@ -77,16 +77,21 @@ public class Square : Tile
 
                 int player = tile.Value.getOwner();
 
-                if (ownedPerPlayer.ContainsKey(player))
+                if (player != Main.NO_ONE)
                 {
 
-                    ownedPerPlayer[player]++;
+                    if (ownedPerPlayer.ContainsKey(player))
+                    {
 
-                }
-                else
-                {
+                        ownedPerPlayer[player]++;
 
-                    ownedPerPlayer.Add(player, 1);
+                    }
+                    else
+                    {
+
+                        ownedPerPlayer.Add(player, 1);
+
+                    }
 
                 }
 
