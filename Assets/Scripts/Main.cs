@@ -207,7 +207,8 @@ public class Main : MonoBehaviour
             if (i < GRID_HEIGHT - 2 && hasBothNeighbors)
             {
 
-                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
+                // Extra -0.01f fixes issue with misalignment
+                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) - 0.01f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
 
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
