@@ -8,10 +8,16 @@ public class Square : Tile
     private int building;
 
     [SerializeField] private Sprite[] tileSprites;
+
+    // Sprites for ownable buildings
     // Structured so that each sprite is at "(building * playerCount) + owner + 1"
     // This allows each player and building combination to be represented
     // "owner + 1" allows there to be a sprite that represents no owner
-    [SerializeField] private Sprite[] buildingSprites;
+    [SerializeField] private Sprite[] ownableBuildingSprites;
+
+    // Sprites for buildings that do not change based on who owns them
+    // Structured so that each sprite is at "building - 5"
+    [SerializeField] private Sprite[] nuetralBuildingSprites;
 
     public override void setTerrain(int terrain)
     {
@@ -223,7 +229,7 @@ public class Square : Tile
         {
 
             // Formula for sprite location explained where sprite array is declared
-            this.gameObject.GetComponent<SpriteRenderer>().sprite = buildingSprites[(building * Main.PLAYER_COUNT) + owner + 1];
+            this.gameObject.GetComponent<SpriteRenderer>().sprite = ownableBuildingSprites[(building * Main.PLAYER_COUNT) + owner + 1];
 
         } else
         {

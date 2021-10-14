@@ -102,7 +102,7 @@ MonoBehaviour:
   tileSprites:
   - {fileID: 21300000, guid: 46d57ed2849af834482ddc126adcc26e, type: 3}
   - {fileID: 21300000, guid: c16a632b644622746b9f8801fbfc91ba, type: 3}
-  buildingSprites:
+  ownableBuildingSprites:
   - {fileID: 21300000, guid: b173d6bf4fa080f42aeb515d42bb3759, type: 3}
   - {fileID: 21300000, guid: 101c314125f275a43a370c86e51381de, type: 3}
   - {fileID: 21300000, guid: 97dcfc94a2552724ab6f9473dbf92cc3, type: 3}
@@ -118,6 +118,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 04aa89c6b4665cf40bdbdbe972ed6f7f, type: 3}
   - {fileID: 21300000, guid: 4ee73250eb29a704692008f2f60907ce, type: 3}
   - {fileID: 21300000, guid: 176bbad53cfc7f44998bcfc44cc8a3f6, type: 3}
+  nuetralBuildingSprites:
+  - {fileID: 21300000, guid: 990251f299c3c3240b443ddf809e397c, type: 3}
 --- !u!61 &8079607686473340904
 BoxCollider2D:
   m_ObjectHideFlags: 0
