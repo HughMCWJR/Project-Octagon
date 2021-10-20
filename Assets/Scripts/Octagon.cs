@@ -37,6 +37,27 @@ public class Octagon : Tile
 
             }
 
+            // Also check for neighbors through bridges
+            foreach (int square in squareNeighbors)
+            {
+
+                Square squareObject = (Square) neighbors[square];
+
+                if (squareObject.getBuilding() == Main.BRIDGE)
+                {
+
+                    if (neighbors[square].getNeighbors()[square].getOwner() == attackingPlayer)
+                    {
+
+                        hasNeighber = true;
+                        break;
+
+                    }
+
+                }
+
+            }
+
             if (hasNeighber)
             {
 

@@ -1198,6 +1198,7 @@ MonoBehaviour:
   nextTurnButton: {fileID: 567406844}
   movesLeftText: {fileID: 1063393860}
   whosTurnText: {fileID: 1339088360}
+  SELECTED_MAP: test
 --- !u!81 &2142078380
 AudioListener:
   m_ObjectHideFlags: 0

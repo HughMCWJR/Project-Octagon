@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
-    
+
     // Instantiate player objects
     private Player leftPlayer;
     private Player rightPlayer;
@@ -47,7 +47,7 @@ public class Main : MonoBehaviour
     // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
     public const int MOUNTAIN = 0;
-    public const int DESERT   = 1;
+    public const int DESERT = 1;
 
     // Distance between centers of tiles
     const float TILE_HEIGHT = 0.72f;
@@ -71,25 +71,29 @@ public class Main : MonoBehaviour
     public const int NW = 7;
 
     // Constants for buildings
-    // Number of type of buildings
-    const int NUM_TYPE_BUILDINGS = 5;
+    // Number of type of ownable buildings
+    public const int NUM_TYPE_BUILDINGS = 5;
     // Index for each building type in sprite array
-    public const int NONE     = -1;
-    public const int FACTORY  =  0;
-    public const int BARRACKS =  1;
-    public const int BUNKER   =  2;
-    public const int ARMORY   =  3;
-    public const int MORTAR   =  4;
-    public const int BRIDGE   =  5;
-    public const int RUIN     =  6;
+    public const int NONE = -1;
+    public const int FACTORY = 0;
+    public const int BARRACKS = 1;
+    public const int BUNKER = 2;
+    public const int ARMORY = 3;
+    public const int MORTAR = 4;
+    public const int BRIDGE = 5;
+    public const int RUIN = 6;
 
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
     // The strings are written in order of how the tiles are instantiated
-    private readonly string[] mapNames = new string[] {"desert"};
+    private readonly string[] mapNames = new string[] { "desert", "test"};
 
     // Dictionary for maps
     private Dictionary<string, string[]> maps;
+
+    // TEMP
+    // SELECTS MAP
+    [SerializeField] private  string SELECTED_MAP;
 
     // Constants for map indexes
     const int OCTAGON = 0;
@@ -207,8 +211,8 @@ public class Main : MonoBehaviour
             if (i < GRID_HEIGHT - 2 && hasBothNeighbors)
             {
 
-                // Extra -0.01f fixes issue with misalignment
-                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) - 0.01f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
+                // Extra 0.14f fixes issue with misalignment
+                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
 
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
@@ -268,7 +272,7 @@ public class Main : MonoBehaviour
         maps = loadMaps(mapNames);
 
         // Assign map terrains
-        setMap(mapNames[Random.Range(0, mapNames.Length)]);
+        setMap(SELECTED_MAP);
 
         // Start first turn
         nextTurn();
@@ -492,14 +496,20 @@ public class Main : MonoBehaviour
     public void updateBuildingCount(int player, int building, bool increase)
     {
 
-        switch (player)
+        // Only update if building is ownable
+        if (building < NUM_TYPE_BUILDINGS)
         {
-            case LEFT_PLAYER:
-                leftPlayer.changeBuildingCount(building, increase);
-                break;
-            case RIGHT_PLAYER:
-                rightPlayer.changeBuildingCount(building, increase);
-                break;
+
+            switch (player)
+            {
+                case LEFT_PLAYER:
+                    leftPlayer.changeBuildingCount(building, increase);
+                    break;
+                case RIGHT_PLAYER:
+                    rightPlayer.changeBuildingCount(building, increase);
+                    break;
+            }
+
         }
 
     }
@@ -548,7 +558,7 @@ public class Main : MonoBehaviour
 
     // Get opposite direction
     // @param: direction to find opposite of
-    private int getOppositeDirection(int direction)
+    public int getOppositeDirection(int direction)
     {
 
         int oppDir = direction + 4;
@@ -744,7 +754,24 @@ public class Main : MonoBehaviour
                 if (octagons[new Vector2(j, i)].getNeighbors().ContainsKey(S))
                 {
 
-                    octagons[new Vector2(j, i)].getNeighbors()[S].setTerrain(int.Parse(maps[mapName][SQUARE].Substring(squareIndex++, 1)));
+                    // If Square being given a starting building then assign desert as terrain
+                    // then assign building
+                    int index = int.Parse(maps[mapName][SQUARE].Substring(squareIndex++, 1));
+
+                    if (index >= NUM_TYPE_BUILDINGS)
+                    {
+
+                        Square square = (Square)octagons[new Vector2(j, i)].getNeighbors()[S];
+
+                        square.getNeighbors()[S].setTerrain(DESERT);
+                        square.setBuilding(index);
+
+                    } else
+                    {
+
+                        octagons[new Vector2(j, i)].getNeighbors()[S].setTerrain(index);
+
+                    }
 
                 }
 

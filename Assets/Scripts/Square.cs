@@ -16,7 +16,7 @@ public class Square : Tile
     [SerializeField] private Sprite[] ownableBuildingSprites;
 
     // Sprites for buildings that do not change based on who owns them
-    // Structured so that each sprite is at "building - 5"
+    // Structured so that each sprite is at "building - Number of ownable buildings"
     [SerializeField] private Sprite[] nuetralBuildingSprites;
 
     public override void setTerrain(int terrain)
@@ -228,8 +228,19 @@ public class Square : Tile
         if (building != Main.NONE)
         {
 
-            // Formula for sprite location explained where sprite array is declared
-            this.gameObject.GetComponent<SpriteRenderer>().sprite = ownableBuildingSprites[(building * Main.PLAYER_COUNT) + owner + 1];
+            // Check if building is ownable or not, changes sprite assignment process
+            if (building >= 5)
+            {
+
+                this.gameObject.GetComponent<SpriteRenderer>().sprite = nuetralBuildingSprites[building - Main.NUM_TYPE_BUILDINGS];
+
+            } else
+            {
+
+                // Formula for sprite location explained where sprite array is declared
+                this.gameObject.GetComponent<SpriteRenderer>().sprite = ownableBuildingSprites[(building * Main.PLAYER_COUNT) + owner + 1];
+
+            }
 
         } else
         {
