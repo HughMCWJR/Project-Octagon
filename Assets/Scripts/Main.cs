@@ -15,6 +15,7 @@ public class Main : MonoBehaviour
     public const int NO_ONE = -1;
     public const int RIGHT_PLAYER = 0;
     public const int LEFT_PLAYER = 1;
+    public const int BOTH_PLAYERS = 2;
 
     // 1 + Number of players who have unique sprites for buildings
     // The additional 1 is because no one owning the building is counted as a player
@@ -47,7 +48,9 @@ public class Main : MonoBehaviour
     // Constants for terrains of tiles
     // Acts as index for tile sprite arrays
     public const int MOUNTAIN = 0;
-    public const int DESERT = 1;
+    public const int DESERT   = 1;
+    public const int WATER    = 2;
+    public const int CITY     = 3;
 
     // Distance between centers of tiles
     const float TILE_HEIGHT = 0.72f;
@@ -212,7 +215,7 @@ public class Main : MonoBehaviour
             {
 
                 // Extra 0.14f fixes issue with misalignment
-                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT)));
+                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f));
 
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
@@ -394,8 +397,9 @@ public class Main : MonoBehaviour
 
     // See if player can claim nuetral octagon, if so tell player that octagon has been claimed
     // @param:  attacksNeeded = Integer number of needed attacks
+    //          attacksUsed   = Integer number of attacks used on claim, default is -1 which means use attacksNeeded instead
     // @return: true if octagon can be claimed, false otherwise
-    public bool tryClaimOctagon(int attacksNeeded)
+    public bool tryClaimOctagon(int attacksNeeded, int attacksUsed = -1)
     {
 
         if  (getCurrentPlayer().getAttacks() < attacksNeeded)
@@ -405,11 +409,13 @@ public class Main : MonoBehaviour
 
         }
 
-        int attacksLeft = getCurrentPlayer().attackedOctagon(attacksNeeded);
+        // Subtract attacks used which is attacks needed unless otherwise set
+        int attacksLeft = getCurrentPlayer().attackedOctagon(attacksUsed == -1 ? attacksNeeded : attacksUsed);
 
         //TEMP
         movesLeftText.text = attacksLeft.ToString();
 
+        //TEMP
         // If there are 0 attacks left then set next turn button to active
         if (attacksLeft == 0)
         {
@@ -452,6 +458,7 @@ public class Main : MonoBehaviour
         //TEMP
         movesLeftText.text = attacksLeft.ToString();
 
+        //TEMP
         // If there are 0 attacks left then set next turn button to active
         if (attacksLeft == 0)
         {
@@ -479,6 +486,7 @@ public class Main : MonoBehaviour
         //TEMP
         movesLeftText.text = buildsLeft.ToString();
 
+        //TEMP
         // If there are 0 builds left then set next turn button to active
         if (buildsLeft == 0)
         {

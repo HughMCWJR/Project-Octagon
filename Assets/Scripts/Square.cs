@@ -35,10 +35,8 @@ public class Square : Tile
             // Current player building
             int buildingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
 
-            // Check that building player has square surrounded
-            bool surrounded = checkSurrounded() == buildingPlayer;
-
-            if (surrounded)
+            // Check that this player owns this empty square
+            if (owner == buildingPlayer || owner == Main.BOTH_PLAYERS)
             {
 
                 // If clicked, try and build on square if available
@@ -49,6 +47,7 @@ public class Square : Tile
                     {
                         
                         setBuilding(main.getChosenBuilding());
+                        checkOwnership();
 
                     }
 
@@ -66,11 +65,48 @@ public class Square : Tile
     {
 
         // If square has no building, then only set ownership if completely surrounded
+        // or if next to a city owned by the player
         // Otherwise show ownership to player who owns most surrounding Octagons
         if (building == Main.NONE)
         {
 
-            setOwner(checkSurrounded());
+            int surroundingPlayer = checkSurrounded();
+
+            if (surroundingPlayer != Main.NO_ONE)
+            {
+
+                setOwner(surroundingPlayer);
+
+            } else
+            {
+
+                int foundOwner = Main.NO_ONE;
+
+                foreach (KeyValuePair<int, Tile> tile in neighbors)
+                {
+
+                    if (tile.Value.getTerrain() == Main.CITY)
+                    {
+
+                        if (foundOwner == Main.NO_ONE || foundOwner == tile.Value.getOwner())
+                        {
+
+                            foundOwner = tile.Value.getOwner();
+
+                        } else
+                        {
+
+                            foundOwner = Main.BOTH_PLAYERS;
+
+                        }
+
+                    }
+
+                }
+
+                setOwner(foundOwner);
+
+            }
 
         } else
         {
@@ -134,7 +170,7 @@ public class Square : Tile
 
     }
 
-    // Find player that surrounds square, returns Main.NO_ONE if no one does
+    // Find player that surrounds square or owns neighboring city, returns Main.NO_ONE if no one does
     private int checkSurrounded()
     {
 
@@ -215,6 +251,9 @@ public class Square : Tile
                 break;
             case Main.LEFT_PLAYER:
                 srend.color = Color.blue;
+                break;
+            case Main.BOTH_PLAYERS:
+                srend.color = Color.magenta;
                 break;
         }
 

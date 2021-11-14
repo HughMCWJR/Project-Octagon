@@ -15,7 +15,7 @@ public class Octagon : Tile
     {
 
         // If clicked, try and attack octagon if available
-        if (terrain == Main.DESERT && Input.GetMouseButtonDown(0))
+        if (terrain != Main.MOUNTAIN && Input.GetMouseButtonDown(0))
         {
 
             // Current player attacking
@@ -64,7 +64,9 @@ public class Octagon : Tile
                 if (owner == Main.NO_ONE)
                 {
 
-                    if (main.tryClaimOctagon(findAttacksNeededToClaim()))
+                    int attacksNeeded = findAttacksNeededToClaim();
+
+                    if (main.tryClaimOctagon(attacksNeeded, terrain == Main.WATER ? attacksNeeded - 1 : -1))
                     {
 
                         setOwner(attackingPlayer);

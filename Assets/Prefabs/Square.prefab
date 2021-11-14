@@ -70,8 +70,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1637414081
-  m_SortingLayer: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -100,26 +100,27 @@ MonoBehaviour:
   main: {fileID: 0}
   owner: 0
   tileSprites:
-  - {fileID: 21300000, guid: 70c1c14f708bdbd4fa2c16562f071121, type: 3}
-  - {fileID: 21300000, guid: 197847bc3b76a7146837e5601abd4f47, type: 3}
+  - {fileID: 21300000, guid: 57c866205f5badc47be0b9b9467d4da7, type: 3}
+  - {fileID: 21300000, guid: 25c271ae4b0192e43837a638c413f868, type: 3}
   ownableBuildingSprites:
-  - {fileID: 21300000, guid: 3a6f3532807314249be7c6a430914e04, type: 3}
-  - {fileID: 21300000, guid: 49729f32eff9c8b45976ccb9246ec127, type: 3}
-  - {fileID: 21300000, guid: bd155f998072b1145998106d47418f38, type: 3}
-  - {fileID: 21300000, guid: 883f3ee428d8e294fae1ba077b4bc56d, type: 3}
-  - {fileID: 21300000, guid: d83669a2c27d2ab4da8bab9ada814931, type: 3}
-  - {fileID: 21300000, guid: 9ae2040ed140beb4e935d960129654bf, type: 3}
-  - {fileID: 21300000, guid: 60183a13ba0e8cb4bb789093792f4d9e, type: 3}
-  - {fileID: 21300000, guid: 98da07cb83b661c48ae824e570fdac16, type: 3}
-  - {fileID: 21300000, guid: 22952e5e32bed364ab847eee62915864, type: 3}
-  - {fileID: 21300000, guid: 00abd93450dca0b499858fa75cf80f2c, type: 3}
-  - {fileID: 21300000, guid: 240219be02dd0054b92599428002ee80, type: 3}
-  - {fileID: 21300000, guid: 92f22437fac124f4ba125eb3ecba059b, type: 3}
-  - {fileID: 21300000, guid: 9cd587194ba6d5e4a9973d3d67a0f233, type: 3}
-  - {fileID: 21300000, guid: 47eac0cef7967cc49b42a80b3d7cde40, type: 3}
-  - {fileID: 21300000, guid: 2a10b6857f22e1d4284e7bbfe0529ab6, type: 3}
+  - {fileID: 21300000, guid: 3261bcc6564f80e4ba08cf4272466427, type: 3}
+  - {fileID: 21300000, guid: edd9b99c06c87c74a89acaf5baecd2a0, type: 3}
+  - {fileID: 21300000, guid: cac3a3a7a24b7b54ea279ff7ecf80b05, type: 3}
+  - {fileID: 21300000, guid: edda94bb5e3d6764481b4447331accc1, type: 3}
+  - {fileID: 21300000, guid: cdd233f15dabf104b88cc30279388b15, type: 3}
+  - {fileID: 21300000, guid: 15d8e8954b1cdb142b3e13cc9e5ab5f0, type: 3}
+  - {fileID: 21300000, guid: 094aa97e5d0663a498246b18e9850092, type: 3}
+  - {fileID: 21300000, guid: 95e521c576e71eb4c8614ba28b5f5d17, type: 3}
+  - {fileID: 21300000, guid: a80c2006647ef3d45b24fcd4a304610e, type: 3}
+  - {fileID: 21300000, guid: cb8b441ac3ca18e4a90afbc8fdebf21b, type: 3}
+  - {fileID: 21300000, guid: 2fedf8f720ea25041a1cb95f4c31b874, type: 3}
+  - {fileID: 21300000, guid: 09d59a19d69b4e240a90537c483bff35, type: 3}
+  - {fileID: 21300000, guid: f88e9783e38ffc343b7984f6551cd28f, type: 3}
+  - {fileID: 21300000, guid: caee0c592d4430146bd3050dbb3e73e8, type: 3}
+  - {fileID: 21300000, guid: 1d52515e5a657904fa39a605f92ebd3e, type: 3}
   nuetralBuildingSprites:
   - {fileID: 21300000, guid: db6009e87967ea444a31e9e14316db49, type: 3}
+  - {fileID: 21300000, guid: 182ac2d327bd6fe478ddad8b908adfbc, type: 3}
 --- !u!61 &8079607686473340904
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -171,7 +172,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5826611974045265966}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9157170959368231242}
