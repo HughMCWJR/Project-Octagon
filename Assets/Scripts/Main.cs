@@ -24,14 +24,14 @@ public class Main : MonoBehaviour
     // Whos turn is it
     private bool leftPlayersTurn = false;
 
+    // What mode the turn is currently in
+    private int turnMode;
+
     // Constants for turn mode
     public const int ATTACK_MODE = 0;
     public const int ARMORY_MODE = 1;
     public const int BUILD_MODE  = 2;
     public const int MORTAR_MODE = 3;
-
-    // What mode the turn is currently in
-    private int turnMode;
 
     // Prefabs
     [SerializeField] private Transform octagonPrefab;
