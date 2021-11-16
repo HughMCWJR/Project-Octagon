@@ -14,75 +14,97 @@ public class Octagon : Tile
     void OnMouseOver()
     {
 
-        // If clicked, try and attack octagon if available
-        if (terrain != Main.MOUNTAIN && Input.GetMouseButtonDown(0))
+        // If clicked, see what action is trying to be taken
+        if (Input.GetMouseButtonDown(0))
         {
 
-            // Current player attacking
-            int attackingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
-
-            // Check that attacking player has octagon that can reach this one
-            bool hasNeighber = false;
-
-            foreach (int octagon in octagonNeighbors)
+            if (main.getCurrentTurnMode() == Main.ATTACK_MODE)
             {
 
-                if (neighbors[octagon].getOwner() == attackingPlayer)
+                // Try and attack octagon if available
+                if (terrain != Main.MOUNTAIN)
                 {
 
-                    hasNeighber = true;
-                    break;
+                    // Current player attacking
+                    int attackingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
 
-                }
+                    // Check that attacking player has octagon that can reach this one
+                    bool hasNeighber = false;
 
-            }
-
-            // Also check for neighbors through bridges
-            foreach (int square in squareNeighbors)
-            {
-
-                Square squareObject = (Square) neighbors[square];
-
-                if (squareObject.getBuilding() == Main.BRIDGE)
-                {
-
-                    if (neighbors[square].getNeighbors()[square].getOwner() == attackingPlayer)
+                    foreach (int octagon in octagonNeighbors)
                     {
 
-                        hasNeighber = true;
-                        break;
+                        if (neighbors[octagon].getOwner() == attackingPlayer)
+                        {
+
+                            hasNeighber = true;
+                            break;
+
+                        }
+
+                    }
+
+                    // Also check for neighbors through bridges
+                    foreach (int square in squareNeighbors)
+                    {
+
+                        Square squareObject = (Square)neighbors[square];
+
+                        if (squareObject.getBuilding() == Main.BRIDGE)
+                        {
+
+                            if (neighbors[square].getNeighbors()[square].getOwner() == attackingPlayer)
+                            {
+
+                                hasNeighber = true;
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                    if (hasNeighber)
+                    {
+
+                        if (owner == Main.NO_ONE)
+                        {
+
+                            int attacksNeeded = findAttacksNeededToClaim();
+
+                            if (main.tryClaimOctagon(attacksNeeded, terrain == Main.WATER ? attacksNeeded - 1 : -1))
+                            {
+
+                                setOwner(attackingPlayer);
+
+                            }
+
+                        }
+                        else if (owner != attackingPlayer)
+                        {
+
+                            if (main.tryAttackOctagon(owner, findAttacksNeededToAttack()))
+                            {
+
+                                setOwner(Main.NO_ONE);
+
+                            }
+
+                        }
 
                     }
 
                 }
 
-            }
-
-            if (hasNeighber)
+            } else if (main.getCurrentTurnMode() == Main.MORTAR_MODE)
             {
 
-                if (owner == Main.NO_ONE)
+                // Try and use the mortar on an octagon
+                if (main.tryUseMortar())
                 {
 
-                    int attacksNeeded = findAttacksNeededToClaim();
 
-                    if (main.tryClaimOctagon(attacksNeeded, terrain == Main.WATER ? attacksNeeded - 1 : -1))
-                    {
-
-                        setOwner(attackingPlayer);
-
-                    }
-
-                }
-                else if (owner != attackingPlayer)
-                {
-
-                    if (main.tryAttackOctagon(owner, findAttacksNeededToAttack()))
-                    {
-
-                        setOwner(Main.NO_ONE);
-
-                    }
 
                 }
 

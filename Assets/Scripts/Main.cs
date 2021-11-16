@@ -22,7 +22,16 @@ public class Main : MonoBehaviour
     public const int PLAYER_COUNT = 3;
 
     // Whos turn is it
-    [SerializeField] private bool leftPlayersTurn = false;
+    private bool leftPlayersTurn = false;
+
+    // Constants for turn mode
+    public const int ATTACK_MODE = 0;
+    public const int ARMORY_MODE = 1;
+    public const int BUILD_MODE  = 2;
+    public const int MORTAR_MODE = 3;
+
+    // What mode the turn is currently in
+    private int turnMode;
 
     // Prefabs
     [SerializeField] private Transform octagonPrefab;
@@ -31,14 +40,22 @@ public class Main : MonoBehaviour
     // Buttons
     [SerializeField] private GameObject attackButton;
     [SerializeField] private GameObject buildButton;
+
     [SerializeField] private GameObject nextTurnButton;
+
+    [SerializeField] private GameObject chooseAttackButton;
+    [SerializeField] private GameObject chooseArmoryButton;
+    [SerializeField] private GameObject chooseBuildButton;
+    [SerializeField] private GameObject chooseMortarButton;
+
 
     // Chosen building for when trying to build
     private int chosenBuilding;
 
     // TEMP
     // DISPLAY TEXT
-    [SerializeField] private Text movesLeftText;
+    [SerializeField] private Text primaryMovesLeftText;
+    [SerializeField] private Text secondaryMovesLeftText;
     [SerializeField] private Text whosTurnText;
 
     // Octagons
@@ -346,8 +363,14 @@ public class Main : MonoBehaviour
 
         whosTurnText.text = leftPlayersTurn ? "Blue's Turn" : "Red's Turn";
 
+        // Toggle needed and unneeded buttons
         attackButton.SetActive(true);
         buildButton.SetActive(true);
+
+        chooseAttackButton.SetActive(false);
+        chooseArmoryButton.SetActive(false);
+        chooseBuildButton.SetActive(false);
+        chooseMortarButton.SetActive(false);
 
     }
 
@@ -366,8 +389,16 @@ public class Main : MonoBehaviour
             // Tell correct player to start
             getCurrentPlayer().startAttackTurn();
 
+            // Set default turn mode
+            turnMode = ATTACK_MODE;
+
+            // Enable turn mode buttons
+            chooseAttackButton.SetActive(true);
+            chooseArmoryButton.SetActive(true);
+
             //TEMP
-            movesLeftText.text = getCurrentPlayer().getAttacks().ToString();
+            primaryMovesLeftText.text = getCurrentPlayer().getAttacks().ToString();
+            secondaryMovesLeftText.text = getCurrentPlayer().getArmoryAttacks().ToString();
 
         }
 
@@ -388,11 +419,25 @@ public class Main : MonoBehaviour
             // Tell correct player to start
             getCurrentPlayer().startBuildTurn();
 
+            // Set default turn mode
+            turnMode = BUILD_MODE;
+
+            // Enable turn mode buttons
+            chooseBuildButton.SetActive(true);
+            chooseMortarButton.SetActive(true);
+
             //TEMP
-            movesLeftText.text = getCurrentPlayer().getBuilds().ToString();
+            primaryMovesLeftText.text = getCurrentPlayer().getBuilds().ToString();
+            secondaryMovesLeftText.text = getCurrentPlayer().getMortarAttacks().ToString();
 
         }
 
+    }
+
+    // Set turn mode
+    public void setTurnMode(int newTurnMode)
+    {
+        turnMode = newTurnMode;
     }
 
     // See if player can claim nuetral octagon, if so tell player that octagon has been claimed
@@ -413,16 +458,7 @@ public class Main : MonoBehaviour
         int attacksLeft = getCurrentPlayer().attackedOctagon(attacksUsed == -1 ? attacksNeeded : attacksUsed);
 
         //TEMP
-        movesLeftText.text = attacksLeft.ToString();
-
-        //TEMP
-        // If there are 0 attacks left then set next turn button to active
-        if (attacksLeft == 0)
-        {
-
-            nextTurnButton.SetActive(true);
-
-        }
+        primaryMovesLeftText.text = attacksLeft.ToString();
 
         return true;
 
@@ -456,21 +492,35 @@ public class Main : MonoBehaviour
         int attacksLeft = getCurrentPlayer().attackedOctagon(attacksNeeded);
 
         //TEMP
-        movesLeftText.text = attacksLeft.ToString();
-
-        //TEMP
-        // If there are 0 attacks left then set next turn button to active
-        if (attacksLeft == 0)
-        {
-
-            nextTurnButton.SetActive(true);
-
-        }
+        primaryMovesLeftText.text = attacksLeft.ToString();
 
         return true;
 
     }
 
+    // See if player can use armory, if so tell player that armory has been used
+    // @return: true if armory was used, false otherwise
+    public bool tryUseArmory()
+    {
+
+        if (getCurrentPlayer().getArmoryAttacks() == 0)
+        {
+
+            return false;
+
+        }
+
+        int armoryAttacksLeft = getCurrentPlayer().usedArmory();
+
+        secondaryMovesLeftText.text = armoryAttacksLeft.ToString();
+
+        return true;
+
+    }
+
+    // See if player can build, if so tell player that building has been built
+    // @param:  building         = building trying to be built
+    // @return: true if building was built, false otherwise
     public bool tryBuild(int building)
     {
 
@@ -484,16 +534,27 @@ public class Main : MonoBehaviour
         int buildsLeft = getCurrentPlayer().built(building);
 
         //TEMP
-        movesLeftText.text = buildsLeft.ToString();
+        primaryMovesLeftText.text = buildsLeft.ToString();
 
-        //TEMP
-        // If there are 0 builds left then set next turn button to active
-        if (buildsLeft == 0)
+        return true;
+
+    }
+
+    // See if player can use mortar, if so tell player that mortar has been used
+    // @return: true if mortar was used, false otherwise
+    public bool tryUseMortar()
+    {
+
+        if (getCurrentPlayer().getMortarAttacks() == 0)
         {
 
-            nextTurnButton.SetActive(true);
+            return false;
 
         }
+
+        int mortarAttacksLeft = getCurrentPlayer().usedMortar();
+
+        secondaryMovesLeftText.text = mortarAttacksLeft.ToString();
 
         return true;
 
@@ -592,6 +653,11 @@ public class Main : MonoBehaviour
         return leftPlayersTurn;
     }
 
+    public int getCurrentTurnMode()
+    {
+        return turnMode;
+    }
+
     private class Player
     {
 
@@ -607,7 +673,9 @@ public class Main : MonoBehaviour
 
         // Number of actions currently available
         private int attacks;
+        private int armoryAttacks;
         private int builds;
+        private int mortarAttacks;
 
         public Player(bool leftPlayer)
         {
@@ -624,6 +692,7 @@ public class Main : MonoBehaviour
         {
 
             attacks = numBuildings[BARRACKS] + 1;
+            armoryAttacks = numBuildings[ARMORY];
 
         }
 
@@ -631,6 +700,7 @@ public class Main : MonoBehaviour
         {
 
             builds = numBuildings[FACTORY] + 1;
+            mortarAttacks = numBuildings[MORTAR];
 
         }
 
@@ -656,6 +726,11 @@ public class Main : MonoBehaviour
 
         }
 
+        public int usedArmory()
+        {
+            return --armoryAttacks;
+        }
+
         // Update player after building a building
         // @return: number of builds left
         public int built(int building)
@@ -665,6 +740,11 @@ public class Main : MonoBehaviour
 
             return --builds;
 
+        }
+
+        public int usedMortar()
+        {
+            return --mortarAttacks;
         }
 
         public void loseOctagon()
@@ -679,9 +759,19 @@ public class Main : MonoBehaviour
             return attacks;
         }
 
+        public int getArmoryAttacks()
+        {
+            return armoryAttacks;
+        }
+
         public int getBuilds()
         {
             return builds;
+        }
+
+        public int getMortarAttacks()
+        {
+            return mortarAttacks;
         }
 
         // Increase or decrease building count by 1
