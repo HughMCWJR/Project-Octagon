@@ -73,12 +73,15 @@ public class Main : MonoBehaviour
     public const int CITY     = 3;
 
     // Distance between centers of tiles
-    const float TILE_HEIGHT = 0.72f;
-    const float TILE_WIDTH = 0.72f;
+    const float TILE_HEIGHT = 0.9f;
+    const float TILE_WIDTH = 0.9f;
 
     // Side lengths of grid, makes an irreregular hexagon shaped board
     const int GRID_WIDTH = 12;
-    const int GRID_HEIGHT = 23;
+    const int GRID_HEIGHT = 19;
+
+    // Float for justifying the board's position
+    const float BOARD_Y = 0.15f;
 
     // Side length of starting square for players
     const int STARTING_SIZE = 3;
@@ -109,7 +112,7 @@ public class Main : MonoBehaviour
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
     // The strings are written in order of how the tiles are instantiated
-    private readonly string[] mapNames = new string[] { "desert", "test"};
+    private readonly string[] mapNames = new string[] { "desert", "test", "Map1_Gulch"};
 
     // Dictionary for maps
     private Dictionary<string, string[]> maps;
@@ -149,7 +152,7 @@ public class Main : MonoBehaviour
             {
 
                 // Octagons are placed left to right, top to bottom
-                octagons.Add(new Vector2(j, i), instantiateTile<Octagon>(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT))));
+                octagons.Add(new Vector2(j, i), instantiateTile<Octagon>(octagonPrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT) + BOARD_Y, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - (i * TILE_HEIGHT))));
 
             }
 
@@ -234,8 +237,8 @@ public class Main : MonoBehaviour
             if (i < GRID_HEIGHT - 2 && hasBothNeighbors)
             {
 
-                // Extra 0.14f fixes issue with misalignment
-                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.14f));
+                // Extra 0.16f fixes issue with misalignment
+                Square square = instantiateTile<Square>(squarePrefab, new Vector3((2 * j * TILE_WIDTH) - (TILE_WIDTH * (width - 1)), ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.16f + BOARD_Y, ((GRID_HEIGHT - 1) * TILE_HEIGHT / 2) - ((i + 1) * TILE_HEIGHT) + 0.16f));
 
                 // Set neighbor for octagon and square
                 setNeighbor(octagon.Value, square, S);
