@@ -1,0 +1,14 @@
+Octagons:
+0 - Mountain
+1 - Desert
+2 - Lake
+3 - City
+-----------------------------------------------
+Squares
+0 - Mountain
+1 - Desert
+5 - Bridge
+6 - Ruin
+-----------------------------------------------
+First line is octagons (138 chars)
+Second line is squares (115 chars)
