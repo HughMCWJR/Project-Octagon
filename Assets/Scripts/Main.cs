@@ -24,6 +24,9 @@ public class Main : MonoBehaviour
     // Whos turn is it
     private bool leftPlayersTurn = false;
 
+    // What turn the game is on
+    private int currentTurnCount = 0;
+
     // What mode the turn is currently in
     private int turnMode;
 
@@ -359,6 +362,11 @@ public class Main : MonoBehaviour
 
         //nextTurnButton.SetActive(false);
 
+        // Increase number of turns if it was just now red's turn
+        if (!leftPlayersTurn) {
+            currentTurnCount++;
+        }
+
         leftPlayersTurn = !leftPlayersTurn;
 
         whosTurnText.text = leftPlayersTurn ? "Blue's Turn" : "Red's Turn";
@@ -651,6 +659,11 @@ public class Main : MonoBehaviour
     public bool getCurrentTurn()
     {
         return leftPlayersTurn;
+    }
+
+    public int getCurrentTurnCount()
+    {
+        return currentTurnCount;
     }
 
     public int getCurrentTurnMode()

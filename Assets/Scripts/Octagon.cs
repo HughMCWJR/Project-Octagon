@@ -101,10 +101,75 @@ public class Octagon : Tile
             {
 
                 // Try and use the mortar on an octagon
-                if (main.tryUseMortar())
+                if (main.getCurrentTurnCount() > 2 && main.tryUseMortar())
                 {
 
+                    // For each octagon in a 3x3 area centered on this octagon,
+                    // nuetralize each octagon without an owned building
+                    for (int i = 0; i < 3; i++)
+                    {
 
+                        for (int j  = 0; j < 3; j++)
+                        {
+
+                            // Use i to choose first diagonal
+                            Octagon rowOctagon;
+
+                            if (i == 0)
+                            {
+                                rowOctagon = (Octagon)neighbors[Main.NE];
+                            } else if (i == 1)
+                            {
+                                rowOctagon = this;
+                            } else
+                            {
+                                rowOctagon = (Octagon)neighbors[Main.SW];
+                            }
+
+                            // Use j to choose second diagonal
+                            Octagon chosenOctagon;
+
+                            if (j == 0)
+                            {
+                                chosenOctagon = (Octagon)rowOctagon.getNeighbors()[Main.NW];
+                            }
+                            else if (j == 1)
+                            {
+                                chosenOctagon = rowOctagon;
+                            }
+                            else
+                            {
+                                chosenOctagon = (Octagon)rowOctagon.getNeighbors()[Main.SE];
+                            }
+
+                            // Test octagon to see if it needs to be nuetralized
+                            bool needsToNeutralized = true;
+
+                            foreach (int squareIndex in chosenOctagon.getSquareNeighbors())
+                            {
+
+                                Square squareNeighbor = (Square)chosenOctagon.getNeighbors()[squareIndex];
+
+                                if (squareNeighbor.getBuilding() != Main.NONE && squareNeighbor.getBuilding() < Main.NUM_TYPE_BUILDINGS)
+                                {
+
+                                    needsToNeutralized = false;
+                                    break;
+
+                                }
+
+                            }
+
+                            if (needsToNeutralized)
+                            {
+
+                                chosenOctagon.setOwner(Main.NO_ONE);
+
+                            }
+
+                        }
+
+                    }
 
                 }
 
@@ -162,9 +227,9 @@ public class Octagon : Tile
         }
 
         // Updates surrounding squares to see if ownership changes
-        foreach (int square in squareNeighbors) {
+        foreach (int squareIndex in squareNeighbors) {
 
-            ((Square)neighbors[square]).checkOwnership();
+            ((Square)neighbors[squareIndex]).checkOwnership();
 
         }
 
@@ -274,6 +339,11 @@ public class Octagon : Tile
 
         return squares;
 
+    }
+
+    public List<int> getSquareNeighbors()
+    {
+        return squareNeighbors;
     }
 
 }
