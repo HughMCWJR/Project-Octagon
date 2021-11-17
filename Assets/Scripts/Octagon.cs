@@ -143,7 +143,7 @@ public class Octagon : Tile
                             }
 
                             // Test octagon to see if it needs to be nuetralized
-                            bool needsToNeutralized = true;
+                            bool needsToBeNeutralized = true;
 
                             foreach (int squareIndex in chosenOctagon.getSquareNeighbors())
                             {
@@ -153,14 +153,14 @@ public class Octagon : Tile
                                 if (squareNeighbor.getBuilding() != Main.NONE && squareNeighbor.getBuilding() < Main.NUM_TYPE_BUILDINGS)
                                 {
 
-                                    needsToNeutralized = false;
+                                    needsToBeNeutralized = false;
                                     break;
 
                                 }
 
                             }
 
-                            if (needsToNeutralized)
+                            if (needsToBeNeutralized)
                             {
 
                                 chosenOctagon.setOwner(Main.NO_ONE);

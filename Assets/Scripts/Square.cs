@@ -29,25 +29,71 @@ public class Square : Tile
     void OnMouseOver()
     {
 
-        if (terrain == Main.DESERT && building == Main.NONE)
+        // If clicked, see what action is trying to be taken
+        if (Input.GetMouseButtonDown(0))
         {
 
-            // Current player building
-            int buildingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
-
-            // Check that this player owns this empty square
-            if (owner == buildingPlayer || owner == Main.BOTH_PLAYERS)
+            if (main.getCurrentTurnMode() == Main.BUILD_MODE)
             {
-
-                // If clicked, try and build on square if available
-                if (Input.GetMouseButtonDown(0))
+                
+                // Try and build
+                if (terrain == Main.DESERT && building == Main.NONE)
                 {
 
-                    if (main.tryBuild(main.getChosenBuilding()))
+                    // Current player building
+                    int buildingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
+
+                    // Check that this player owns this empty square
+                    if (owner == buildingPlayer || owner == Main.BOTH_PLAYERS)
                     {
-                        
-                        setBuilding(main.getChosenBuilding());
-                        checkOwnership();
+
+                        if (main.tryBuild(main.getChosenBuilding()))
+                        {
+
+                            setBuilding(main.getChosenBuilding());
+                            checkOwnership();
+
+                        }
+
+                    }
+
+                }
+
+            } else if (main.getCurrentTurnMode() == Main.ARMORY_MODE)
+            {
+
+                // Try and destroy building
+                if (building != Main.NONE)
+                {
+
+                    // See if current player owns surrounding octagon
+                    int armoryUsingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
+
+                    bool inArmoryRange = false;
+
+                    foreach (KeyValuePair<int, Tile> tile in neighbors)
+                    {
+
+                        if (tile.Value.getOwner() == armoryUsingPlayer)
+                        {
+
+                            inArmoryRange = true;
+                            break;
+
+                        }
+
+                    }
+
+                    if (inArmoryRange)
+                    {
+
+                        if (main.tryUseArmory())
+                        {
+
+                            main.updateBuildingCount(armoryUsingPlayer, building, false);
+                            setBuilding(Main.NONE);
+
+                        }
 
                     }
 

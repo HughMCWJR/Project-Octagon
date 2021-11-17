@@ -487,6 +487,7 @@ public class Main : MonoBehaviour
         }
 
         // Remove octagon from the owner
+        /*
         switch (owner)
         {
             case LEFT_PLAYER:
@@ -496,6 +497,7 @@ public class Main : MonoBehaviour
                 rightPlayer.loseOctagon();
                 break;
         }
+        */
 
         int attacksLeft = getCurrentPlayer().attackedOctagon(attacksNeeded);
 
@@ -677,9 +679,6 @@ public class Main : MonoBehaviour
         // If this player is left player
         private bool leftPlayer;
 
-        // Number of octagons owened by player
-        private int numOctagons;
-
         // Array of buildings owned
         // Meaning of indexes are declared as constants
         private int[] numBuildings;
@@ -694,7 +693,6 @@ public class Main : MonoBehaviour
         {
             
             this.leftPlayer = leftPlayer;
-            this.numOctagons = 0;
             this.numBuildings = new int[NUM_TYPE_BUILDINGS];
             this.attacks = 0;
             this.builds = 0;
@@ -721,8 +719,6 @@ public class Main : MonoBehaviour
         // @return: number of attacks left
         public int claimedOctagon()
         {
-
-            numOctagons++;
 
             return --attacks;
 
@@ -758,13 +754,6 @@ public class Main : MonoBehaviour
         public int usedMortar()
         {
             return --mortarAttacks;
-        }
-
-        public void loseOctagon()
-        {
-
-            numOctagons--;
-
         }
 
         public int getAttacks()
