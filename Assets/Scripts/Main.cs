@@ -112,7 +112,7 @@ public class Main : MonoBehaviour
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
     // The strings are written in order of how the tiles are instantiated
-    private readonly string[] mapNames = new string[] { "desert", "test", "Map1_Gulch"};
+    private readonly string[] mapNames = new string[] { "desert", "test", "Map1_Gulch", "Map2_Ridge"};
 
     // Dictionary for maps
     private Dictionary<string, string[]> maps;
@@ -134,8 +134,7 @@ public class Main : MonoBehaviour
         rightPlayer = new Player(false);
 
         // Set starting value for chosen building
-        // TEMP?
-        chosenBuilding = FACTORY;
+        chosenBuilding = BARRACKS;
 
         // Dictionary for octagons, keys are their positions on a diagonal grid with 0,0 being the top left (used j and i from spawnGrid() to create these coordinates)
         octagons = new Dictionary<Vector2, Octagon>();
@@ -433,6 +432,9 @@ public class Main : MonoBehaviour
             // Set default turn mode
             turnMode = BUILD_MODE;
 
+            // Set chosen building to barracks by default
+            chosenBuilding = BARRACKS;
+
             // Enable turn mode buttons
             chooseBuildButton.SetActive(true);
             chooseMortarButton.SetActive(true);
@@ -451,7 +453,7 @@ public class Main : MonoBehaviour
         turnMode = newTurnMode;
     }
 
-    // See if player can claim nuetral octagon, if so tell player that octagon has been claimed
+    // See if player can claim neutral octagon, if so tell player that octagon has been claimed
     // @param:  attacksNeeded = Integer number of needed attacks
     //          attacksUsed   = Integer number of attacks used on claim, default is -1 which means use attacksNeeded instead
     // @return: true if octagon can be claimed, false otherwise
@@ -596,7 +598,7 @@ public class Main : MonoBehaviour
 
     }
 
-    private void setChosenBuilding(int building)
+    public void setChosenBuilding(int building)
     {
 
         chosenBuilding = building;
