@@ -40,6 +40,10 @@ public class Main : MonoBehaviour
     [SerializeField] private Transform octagonPrefab;
     [SerializeField] private Transform squarePrefab;
 
+    // Text
+    [SerializeField] private GameObject PrimaryMovesLeft;
+    [SerializeField] private GameObject SecondaryMovesLeft;
+
     // Buttons
     [SerializeField] private GameObject attackButton;
     [SerializeField] private GameObject buildButton;
@@ -48,8 +52,14 @@ public class Main : MonoBehaviour
 
     [SerializeField] private GameObject chooseAttackButton;
     [SerializeField] private GameObject chooseArmoryButton;
-    [SerializeField] private GameObject chooseBuildButton;
     [SerializeField] private GameObject chooseMortarButton;
+
+    [SerializeField] private GameObject Select_Barrack;
+    [SerializeField] private GameObject Select_Factory;
+    [SerializeField] private GameObject Select_Bunker;
+    [SerializeField] private GameObject Select_Armory;
+    [SerializeField] private GameObject Select_Mortar;
+    [SerializeField] private GameObject Select_Project;
 
 
     // Chosen building for when trying to build
@@ -379,8 +389,15 @@ public class Main : MonoBehaviour
 
         chooseAttackButton.SetActive(false);
         chooseArmoryButton.SetActive(false);
-        chooseBuildButton.SetActive(false);
         chooseMortarButton.SetActive(false);
+        Select_Barrack.SetActive(false);
+        Select_Factory.SetActive(false);
+        Select_Bunker.SetActive(false);
+        Select_Armory.SetActive(false);
+        Select_Mortar.SetActive(false);
+        Select_Project.SetActive(false);
+        PrimaryMovesLeft.SetActive(false);
+        SecondaryMovesLeft.SetActive(false);
 
     }
 
@@ -405,6 +422,10 @@ public class Main : MonoBehaviour
             // Enable turn mode buttons
             chooseAttackButton.SetActive(true);
             chooseArmoryButton.SetActive(true);
+
+            // Enable counters and place them in the right position
+            PrimaryMovesLeft.SetActive(true);
+            SecondaryMovesLeft.SetActive(true);
 
             //TEMP
             primaryMovesLeftText.text = getCurrentPlayer().getAttacks().ToString();
@@ -436,8 +457,17 @@ public class Main : MonoBehaviour
             chosenBuilding = BARRACKS;
 
             // Enable turn mode buttons
-            chooseBuildButton.SetActive(true);
             chooseMortarButton.SetActive(true);
+            Select_Barrack.SetActive(true);
+            Select_Factory.SetActive(true);
+            Select_Bunker.SetActive(true);
+            Select_Armory.SetActive(true);
+            Select_Mortar.SetActive(true);
+            Select_Project.SetActive(true);
+
+            // Enable counters and place them in the right position
+            PrimaryMovesLeft.SetActive(true);
+            SecondaryMovesLeft.SetActive(true);
 
             //TEMP
             primaryMovesLeftText.text = getCurrentPlayer().getBuilds().ToString();
