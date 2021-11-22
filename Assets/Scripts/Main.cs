@@ -118,6 +118,7 @@ public class Main : MonoBehaviour
     public const int MORTAR = 4;
     public const int BRIDGE = 5;
     public const int RUIN = 6;
+    public const int PROJECT = 7;
 
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
@@ -343,26 +344,43 @@ public class Main : MonoBehaviour
         {
 
             setChosenBuilding(BARRACKS);
+            removeOutline();
+            addOutline();
 
         } else if (Input.GetKeyDown("2"))
         {
 
             setChosenBuilding(FACTORY);
+            removeOutline();
+            addOutline();
 
         } else if (Input.GetKeyDown("3"))
         {
 
             setChosenBuilding(BUNKER);
+            removeOutline();
+            addOutline();
 
         } else if (Input.GetKeyDown("4"))
         {
 
             setChosenBuilding(ARMORY);
+            removeOutline();
+            addOutline();
 
         } else if (Input.GetKeyDown("5"))
         {
 
             setChosenBuilding(MORTAR);
+            removeOutline();
+            addOutline();
+
+        } else if (Input.GetKeyDown("6"))
+        {
+
+            setChosenBuilding(PROJECT);
+            removeOutline();
+            addOutline();
 
         }
 
@@ -418,12 +436,14 @@ public class Main : MonoBehaviour
 
             // Set default turn mode
             turnMode = ATTACK_MODE;
+            removeOutline();
+            addOutline(2);
 
             // Enable turn mode buttons
             chooseAttackButton.SetActive(true);
             chooseArmoryButton.SetActive(true);
 
-            // Enable counters and place them in the right position
+            // Enable counters
             PrimaryMovesLeft.SetActive(true);
             SecondaryMovesLeft.SetActive(true);
 
@@ -452,6 +472,8 @@ public class Main : MonoBehaviour
 
             // Set default turn mode
             turnMode = BUILD_MODE;
+            removeOutline();
+            addOutline();
 
             // Set chosen building to barracks by default
             chosenBuilding = BARRACKS;
@@ -912,6 +934,86 @@ public class Main : MonoBehaviour
 
             }
 
+        }
+
+    }
+
+    // Add Outline (Build Buttons)
+    // Adds the outline to the currently selected building.
+    public void addOutline()
+    {
+        switch (getChosenBuilding())
+        {
+            case 0: //Factory
+                Select_Factory.GetComponent<Outline>().enabled = true;
+                break;
+            case 1: //Barracks
+                Select_Barrack.GetComponent<Outline>().enabled = true;
+                break;
+            case 2: //Bunker
+                Select_Bunker.GetComponent<Outline>().enabled = true;
+                break;
+            case 3: //Armory
+                Select_Armory.GetComponent<Outline>().enabled = true;
+                break;
+            case 4: //Mortar
+                Select_Mortar.GetComponent<Outline>().enabled = true;
+                break;
+            case 7: //Project
+                Select_Project.GetComponent<Outline>().enabled = true;
+                break;
+        }
+    }
+
+    // Add Outline
+    // Adds the outline to the currently selected button.
+    public void addOutline(int selection)
+    {
+        switch (selection)
+        {
+            case 0: //Mortar Button
+                chooseMortarButton.GetComponent<Outline>().enabled = true;
+                break;
+            case 1: //Armory Button
+                chooseArmoryButton.GetComponent<Outline>().enabled = true;
+                break;
+            case 2: //Attack Button
+                chooseAttackButton.GetComponent<Outline>().enabled = true;
+                break;
+        }
+    }
+
+    // Remove Build Outline
+    // Removes the outline from every building button.
+    public void removeOutline()
+    {
+
+        switch (getCurrentTurnMode())
+        {
+            case 0: //Attack
+                chooseArmoryButton.GetComponent<Outline>().enabled = false;
+                break;
+            case 1: //Armory
+                chooseAttackButton.GetComponent<Outline>().enabled = false;
+                break;
+            case 2: //Build
+                Select_Factory.GetComponent<Outline>().enabled = false;
+                Select_Barrack.GetComponent<Outline>().enabled = false;
+                Select_Bunker.GetComponent<Outline>().enabled = false;
+                Select_Armory.GetComponent<Outline>().enabled = false;
+                Select_Mortar.GetComponent<Outline>().enabled = false;
+                Select_Project.GetComponent<Outline>().enabled = false;
+                chooseMortarButton.GetComponent<Outline>().enabled = false;
+                break;
+            case 3: //Mortar
+                Select_Factory.GetComponent<Outline>().enabled = false;
+                Select_Barrack.GetComponent<Outline>().enabled = false;
+                Select_Bunker.GetComponent<Outline>().enabled = false;
+                Select_Armory.GetComponent<Outline>().enabled = false;
+                Select_Mortar.GetComponent<Outline>().enabled = false;
+                Select_Project.GetComponent<Outline>().enabled = false;
+                chooseMortarButton.GetComponent<Outline>().enabled = false;
+                break;
         }
 
     }
