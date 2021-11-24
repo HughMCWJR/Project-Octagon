@@ -35,7 +35,7 @@ public class Square : Tile
 
             if (main.getCurrentTurnMode() == Main.BUILD_MODE)
             {
-                
+
                 // Try and build
                 if (terrain == Main.DESERT && building == Main.NONE)
                 {
@@ -92,7 +92,46 @@ public class Square : Tile
 
                             main.updateBuildingCount(armoryUsingPlayer, building, false);
                             setBuilding(Main.NONE);
+                            setTerrain(Main.DESERT);
+                            checkOwnership();
 
+                        }
+
+                    }
+
+                }
+
+            }
+            else if (main.getCurrentTurnMode() == Main.REINFORCE_MODE)
+            {
+
+                // See if current player owns surrounding octagon
+                int reinforceUsingPlayer = main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER;
+
+                bool inReinforceRange = false;
+
+                foreach (KeyValuePair<int, Tile> tile in neighbors)
+                {
+
+                    if (tile.Value.getOwner() == reinforceUsingPlayer)
+                    {
+
+                        inReinforceRange = true;
+                        break;
+
+                    }
+
+                }
+                if (inReinforceRange)
+                {
+
+                    if (terrain == Main.DESERT && building == Main.NONE)
+                    {
+
+                        if (main.tryUseReinforcement())
+                        {
+                            setBuilding(Main.BUNKER);
+                            checkOwnership();
                         }
 
                     }

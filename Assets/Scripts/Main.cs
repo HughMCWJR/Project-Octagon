@@ -35,6 +35,7 @@ public class Main : MonoBehaviour
     public const int ARMORY_MODE = 1;
     public const int BUILD_MODE  = 2;
     public const int MORTAR_MODE = 3;
+    public const int REINFORCE_MODE = 4;
 
     // Prefabs
     [SerializeField] private Transform octagonPrefab;
@@ -43,6 +44,7 @@ public class Main : MonoBehaviour
     // Text
     [SerializeField] private GameObject PrimaryMovesLeft;
     [SerializeField] private GameObject SecondaryMovesLeft;
+    [SerializeField] private GameObject TertiaryMovesLeft;
 
     // Buttons
     [SerializeField] private GameObject attackButton;
@@ -53,13 +55,14 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject chooseAttackButton;
     [SerializeField] private GameObject chooseArmoryButton;
     [SerializeField] private GameObject chooseMortarButton;
+    [SerializeField] private GameObject chooseReinforcementButton;
 
     [SerializeField] private GameObject Select_Barrack;
     [SerializeField] private GameObject Select_Factory;
     [SerializeField] private GameObject Select_Bunker;
     [SerializeField] private GameObject Select_Armory;
     [SerializeField] private GameObject Select_Mortar;
-    [SerializeField] private GameObject Select_Project;
+    //[SerializeField] private GameObject Select_Project;
 
 
     // Chosen building for when trying to build
@@ -69,6 +72,7 @@ public class Main : MonoBehaviour
     // DISPLAY TEXT
     [SerializeField] private Text primaryMovesLeftText;
     [SerializeField] private Text secondaryMovesLeftText;
+    [SerializeField] private Text tertiaryMovesLeftText;
     [SerializeField] private Text whosTurnText;
 
     // Octagons
@@ -123,7 +127,7 @@ public class Main : MonoBehaviour
     // Names of maps to be loaded
     // Text files are layed out in two lines, first for octagons, second for squares
     // The strings are written in order of how the tiles are instantiated
-    private readonly string[] mapNames = new string[] { "desert", "test", "Map1_Gulch", "Map2_Ridge"};
+    private readonly string[] mapNames = new string[] { "desert", "test", "Map1_Gulch", "Map2_Ridge", "Map3_Hills", "Map4_Saddle", "Map5_Valley", "Map6_Lakes", "Map7_Passage", "Map8_Canyon", "Map9_Capitol"};
 
     // Dictionary for maps
     private Dictionary<string, string[]> maps;
@@ -142,7 +146,9 @@ public class Main : MonoBehaviour
 
         // Instantiate player objects
         leftPlayer  = new Player(true);
+        leftPlayer.reinforcements = 2;
         rightPlayer = new Player(false);
+        rightPlayer.reinforcements = 3;
 
         // Set starting value for chosen building
         chosenBuilding = BARRACKS;
@@ -378,9 +384,9 @@ public class Main : MonoBehaviour
         } else if (Input.GetKeyDown("6"))
         {
 
-            setChosenBuilding(PROJECT);
-            removeOutline();
-            addOutline();
+            //setChosenBuilding(PROJECT);
+            //removeOutline();
+            //addOutline();
 
         }
 
@@ -408,14 +414,16 @@ public class Main : MonoBehaviour
         chooseAttackButton.SetActive(false);
         chooseArmoryButton.SetActive(false);
         chooseMortarButton.SetActive(false);
+        chooseReinforcementButton.SetActive(false);
         Select_Barrack.SetActive(false);
         Select_Factory.SetActive(false);
         Select_Bunker.SetActive(false);
         Select_Armory.SetActive(false);
         Select_Mortar.SetActive(false);
-        Select_Project.SetActive(false);
+        //Select_Project.SetActive(false);
         PrimaryMovesLeft.SetActive(false);
         SecondaryMovesLeft.SetActive(false);
+        TertiaryMovesLeft.SetActive(false);
 
     }
 
@@ -442,14 +450,17 @@ public class Main : MonoBehaviour
             // Enable turn mode buttons
             chooseAttackButton.SetActive(true);
             chooseArmoryButton.SetActive(true);
+            chooseReinforcementButton.SetActive(true);
 
             // Enable counters
             PrimaryMovesLeft.SetActive(true);
             SecondaryMovesLeft.SetActive(true);
+            TertiaryMovesLeft.SetActive(true);
 
             //TEMP
             primaryMovesLeftText.text = getCurrentPlayer().getAttacks().ToString();
             secondaryMovesLeftText.text = getCurrentPlayer().getArmoryAttacks().ToString();
+            tertiaryMovesLeftText.text = getCurrentPlayer().getReinforcements().ToString();
 
         }
 
@@ -472,28 +483,31 @@ public class Main : MonoBehaviour
 
             // Set default turn mode
             turnMode = BUILD_MODE;
-            removeOutline();
-            addOutline();
 
             // Set chosen building to barracks by default
             chosenBuilding = BARRACKS;
+            removeOutline();
+            addOutline();
 
             // Enable turn mode buttons
             chooseMortarButton.SetActive(true);
+            chooseReinforcementButton.SetActive(true);
             Select_Barrack.SetActive(true);
             Select_Factory.SetActive(true);
             Select_Bunker.SetActive(true);
             Select_Armory.SetActive(true);
             Select_Mortar.SetActive(true);
-            Select_Project.SetActive(true);
+            //Select_Project.SetActive(true);
 
             // Enable counters and place them in the right position
             PrimaryMovesLeft.SetActive(true);
             SecondaryMovesLeft.SetActive(true);
+            TertiaryMovesLeft.SetActive(true);
 
             //TEMP
             primaryMovesLeftText.text = getCurrentPlayer().getBuilds().ToString();
             secondaryMovesLeftText.text = getCurrentPlayer().getMortarAttacks().ToString();
+            tertiaryMovesLeftText.text = getCurrentPlayer().getReinforcements().ToString();
 
         }
 
@@ -627,6 +641,24 @@ public class Main : MonoBehaviour
 
     }
 
+    // See if player can use reinforcement, if so, tell the player that the reinforcement has been used.
+    // @return: ture if reinforcement was used, false otherwise
+    public bool tryUseReinforcement()
+    {
+
+        if (getCurrentPlayer().getReinforcements() == 0)
+        {
+            return false;
+        }
+
+        int reinforcementsLeft = getCurrentPlayer().usedReinforce();
+
+        tertiaryMovesLeftText.text = reinforcementsLeft.ToString();
+
+        return true;
+
+    }
+
     // Update building count for player
     // @param: player that needs to be updated, what building, true if building increasing by 1 and false if decreasing by one
     public void updateBuildingCount(int player, int building, bool increase)
@@ -745,6 +777,7 @@ public class Main : MonoBehaviour
         private int armoryAttacks;
         private int builds;
         private int mortarAttacks;
+        public int reinforcements;
 
         public Player(bool leftPlayer)
         {
@@ -813,6 +846,11 @@ public class Main : MonoBehaviour
             return --mortarAttacks;
         }
 
+        public int usedReinforce()
+        {
+            return --reinforcements;
+        }
+
         public int getAttacks()
         {
             return attacks;
@@ -831,6 +869,11 @@ public class Main : MonoBehaviour
         public int getMortarAttacks()
         {
             return mortarAttacks;
+        }
+
+        public int getReinforcements()
+        {
+            return reinforcements;
         }
 
         // Increase or decrease building count by 1
@@ -959,9 +1002,11 @@ public class Main : MonoBehaviour
             case 4: //Mortar
                 Select_Mortar.GetComponent<Outline>().enabled = true;
                 break;
+                /*
             case 7: //Project
                 Select_Project.GetComponent<Outline>().enabled = true;
                 break;
+                */
         }
     }
 
@@ -980,6 +1025,9 @@ public class Main : MonoBehaviour
             case 2: //Attack Button
                 chooseAttackButton.GetComponent<Outline>().enabled = true;
                 break;
+            case 3: //Reinforce Button
+                chooseReinforcementButton.GetComponent<Outline>().enabled = true;
+                break;
         }
     }
 
@@ -992,9 +1040,11 @@ public class Main : MonoBehaviour
         {
             case 0: //Attack
                 chooseArmoryButton.GetComponent<Outline>().enabled = false;
+                chooseReinforcementButton.GetComponent<Outline>().enabled = false;
                 break;
             case 1: //Armory
                 chooseAttackButton.GetComponent<Outline>().enabled = false;
+                chooseReinforcementButton.GetComponent<Outline>().enabled = false;
                 break;
             case 2: //Build
                 Select_Factory.GetComponent<Outline>().enabled = false;
@@ -1002,8 +1052,9 @@ public class Main : MonoBehaviour
                 Select_Bunker.GetComponent<Outline>().enabled = false;
                 Select_Armory.GetComponent<Outline>().enabled = false;
                 Select_Mortar.GetComponent<Outline>().enabled = false;
-                Select_Project.GetComponent<Outline>().enabled = false;
+                //Select_Project.GetComponent<Outline>().enabled = false;
                 chooseMortarButton.GetComponent<Outline>().enabled = false;
+                chooseReinforcementButton.GetComponent<Outline>().enabled = false;
                 break;
             case 3: //Mortar
                 Select_Factory.GetComponent<Outline>().enabled = false;
@@ -1011,8 +1062,20 @@ public class Main : MonoBehaviour
                 Select_Bunker.GetComponent<Outline>().enabled = false;
                 Select_Armory.GetComponent<Outline>().enabled = false;
                 Select_Mortar.GetComponent<Outline>().enabled = false;
-                Select_Project.GetComponent<Outline>().enabled = false;
+                //Select_Project.GetComponent<Outline>().enabled = false;
                 chooseMortarButton.GetComponent<Outline>().enabled = false;
+                chooseReinforcementButton.GetComponent<Outline>().enabled = false;
+                break;
+            case 4: //Reinforce
+                Select_Factory.GetComponent<Outline>().enabled = false;
+                Select_Barrack.GetComponent<Outline>().enabled = false;
+                Select_Bunker.GetComponent<Outline>().enabled = false;
+                Select_Armory.GetComponent<Outline>().enabled = false;
+                Select_Mortar.GetComponent<Outline>().enabled = false;
+                //Select_Project.GetComponent<Outline>().enabled = false;
+                chooseMortarButton.GetComponent<Outline>().enabled = false;
+                chooseArmoryButton.GetComponent<Outline>().enabled = false;
+                chooseAttackButton.GetComponent<Outline>().enabled = false;
                 break;
         }
 
