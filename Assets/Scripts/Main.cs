@@ -65,10 +65,13 @@ public class Main : MonoBehaviour
     //[SerializeField] private GameObject Select_Project;
 
     // Factions
-    [SerializeField] private Sprite[] factionsIcons;
-    [SerializeField] private Color[] factionsColors;
-    [SerializeField] private GameObject currentFaction;
-    [SerializeField] private GameObject opposingFaction;
+    [SerializeField] private Sprite leftPlayerIcon;
+    [SerializeField] private Sprite rightPlayerIcon;
+    [SerializeField] private GameObject currentPlayerIcon;
+    [SerializeField] private GameObject opposingPlayerIcon;
+    [SerializeField] private Color leftPlayerColor;
+    [SerializeField] private Color rightPlayerColor;
+    [SerializeField] private GameObject backgroundHaze;
 
     // Chosen building for when trying to build
     private int chosenBuilding;
@@ -78,7 +81,7 @@ public class Main : MonoBehaviour
     [SerializeField] private Text primaryMovesLeftText;
     [SerializeField] private Text secondaryMovesLeftText;
     [SerializeField] private Text tertiaryMovesLeftText;
-    [SerializeField] private Text whosTurnText;
+    [SerializeField] private Text opposingReinforces;
 
     // Building Counters
     [SerializeField] private Text leftMortars;
@@ -164,12 +167,8 @@ public class Main : MonoBehaviour
         // Instantiate player objects
         leftPlayer  = new Player(true);
         leftPlayer.reinforcements = 2;
-        leftPlayer.icon = factionsIcons[0]; //TEMP
-        leftPlayer.color = factionsColors[0]; //TEMP
         rightPlayer = new Player(false);
         rightPlayer.reinforcements = 3;
-        rightPlayer.icon = factionsIcons[1]; //TEMP
-        rightPlayer.color = factionsColors[1]; //TEMP
 
         // Set starting value for chosen building
         chosenBuilding = BARRACKS;
@@ -426,10 +425,15 @@ public class Main : MonoBehaviour
 
         leftPlayersTurn = !leftPlayersTurn;
 
-        whosTurnText.text = leftPlayersTurn ? "Blue's Turn" : "Red's Turn";
+        currentPlayerIcon.GetComponent<Image>().sprite = leftPlayersTurn ? leftPlayerIcon : rightPlayerIcon;
+        opposingPlayerIcon.GetComponent<Image>().sprite = leftPlayersTurn ? rightPlayerIcon : leftPlayerIcon;
+        backgroundHaze.GetComponent<SpriteRenderer>().color = leftPlayersTurn ? leftPlayerColor : rightPlayerColor;
 
         // Update building counters
         updateBuildingCounters();
+
+        // Update opposing reinforce counter
+        opposingReinforces.text = leftPlayersTurn ? rightPlayer.reinforcements.ToString() : leftPlayer.reinforcements.ToString();
 
         // Toggle needed and unneeded buttons
         attackButton.SetActive(true);
@@ -804,10 +808,6 @@ public class Main : MonoBehaviour
         private int builds;
         private int mortarAttacks;
         public int reinforcements;
-
-        // Faction
-        public Sprite icon;
-        public Color color;
 
         public Player(bool leftPlayer)
         {

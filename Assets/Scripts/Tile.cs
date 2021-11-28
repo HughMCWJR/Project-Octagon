@@ -17,6 +17,10 @@ public class Tile : MonoBehaviour
     // Owner of tile
     public int owner;
 
+    // Colors
+    [SerializeField] public Color leftPlayerColor;
+    [SerializeField] public Color rightPlayerColor;
+
     // Update is called once per frame
     void Update()
     {

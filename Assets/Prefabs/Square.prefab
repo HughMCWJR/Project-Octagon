@@ -100,6 +100,8 @@ MonoBehaviour:
   terrain: 0
   main: {fileID: 0}
   owner: 0
+  leftPlayerColor: {r: 0, g: 0.52424407, b: 1, a: 1}
+  rightPlayerColor: {r: 1, g: 0.49803922, b: 0.15294118, a: 1}
   tileSprites:
   - {fileID: 21300000, guid: 57c866205f5badc47be0b9b9467d4da7, type: 3}
   - {fileID: 21300000, guid: 25c271ae4b0192e43837a638c413f868, type: 3}

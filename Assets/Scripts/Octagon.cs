@@ -219,10 +219,10 @@ public class Octagon : Tile
                 srend.color = Color.white;
                 break;
             case Main.RIGHT_PLAYER:
-                srend.color = Color.red;
+                srend.color = rightPlayerColor;
                 break;
             case Main.LEFT_PLAYER:
-                srend.color = Color.blue;
+                srend.color = leftPlayerColor;
                 break;
         }
 

@@ -3,7 +3,40 @@ guid: a4aacf56abd80c1469918a7bc628be90
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - octagonPrefab: {instanceID: 0}
+  - squarePrefab: {instanceID: 0}
+  - PrimaryMovesLeft: {instanceID: 0}
+  - SecondaryMovesLeft: {instanceID: 0}
+  - TertiaryMovesLeft: {instanceID: 0}
+  - attackButton: {instanceID: 0}
+  - buildButton: {instanceID: 0}
+  - nextTurnButton: {instanceID: 0}
+  - chooseAttackButton: {instanceID: 0}
+  - chooseArmoryButton: {instanceID: 0}
+  - chooseMortarButton: {instanceID: 0}
+  - chooseReinforcementButton: {instanceID: 0}
+  - Select_Barrack: {instanceID: 0}
+  - Select_Factory: {instanceID: 0}
+  - Select_Bunker: {instanceID: 0}
+  - Select_Armory: {instanceID: 0}
+  - Select_Mortar: {instanceID: 0}
+  - leftPlayerIcon: {fileID: 21300000, guid: 599a77f0c2fb7e642b45f6c8a1595fb2, type: 3}
+  - rightPlayerIcon: {fileID: 21300000, guid: 1a971e10b624378468ad36e1b3a5e0e9, type: 3}
+  - primaryMovesLeftText: {instanceID: 0}
+  - secondaryMovesLeftText: {instanceID: 0}
+  - tertiaryMovesLeftText: {instanceID: 0}
+  - whosTurnText: {instanceID: 0}
+  - leftMortars: {instanceID: 0}
+  - leftArmories: {instanceID: 0}
+  - leftBunkers: {instanceID: 0}
+  - leftFactories: {instanceID: 0}
+  - leftBarracks: {instanceID: 0}
+  - rightMortars: {instanceID: 0}
+  - rightArmories: {instanceID: 0}
+  - rightBunkers: {instanceID: 0}
+  - rightFactories: {instanceID: 0}
+  - rightBarracks: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

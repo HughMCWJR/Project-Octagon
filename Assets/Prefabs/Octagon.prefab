@@ -46,6 +46,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -130,6 +131,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -180,6 +182,8 @@ MonoBehaviour:
   terrain: 0
   main: {fileID: 0}
   owner: 0
+  leftPlayerColor: {r: 0, g: 0.45490196, b: 1, a: 1}
+  rightPlayerColor: {r: 1, g: 0.43757764, b: 0.15294117, a: 1}
   sprites:
   - {fileID: 21300000, guid: aa67c83335ceeab49af54e192b9ec02d, type: 3}
   - {fileID: 21300000, guid: 93885fc27474ae54789f0dd4b922aaf1, type: 3}
