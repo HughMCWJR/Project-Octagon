@@ -280,23 +280,21 @@ public class Square : Tile
         foreach (KeyValuePair<int, Tile> tile in neighbors)
         {
 
-            if (tile.Value.getOwner() == Main.NO_ONE)
-            {
-
-                surrounded = false;
-                break;
-
-            }
-
             if (tile.Value.terrain == Main.CITY)
             {
                 possiblePlayer = tile.Value.getOwner();
-                break;
+                return possiblePlayer;
+            }
+
+            if (tile.Value.getOwner() == Main.NO_ONE)
+            {
+                surrounded = false;
+                //break;
+
             }
 
             if (possiblePlayer == Main.NO_ONE)
             {
-
                 possiblePlayer = tile.Value.getOwner();
 
             } else
@@ -304,9 +302,8 @@ public class Square : Tile
 
                 if (tile.Value.getOwner() != possiblePlayer)
                 {
-
                     surrounded = false;
-                    break;
+                    //break;
 
                 }
 
@@ -344,7 +341,7 @@ public class Square : Tile
         // Update sprite
         setBuilding(building);
 
-        SpriteRenderer srend = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        srend = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         switch (owner)
         {

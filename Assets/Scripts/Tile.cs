@@ -20,6 +20,7 @@ public class Tile : MonoBehaviour
     // Colors
     [SerializeField] public Color leftPlayerColor;
     [SerializeField] public Color rightPlayerColor;
+    public SpriteRenderer srend;
 
     // Update is called once per frame
     void Update()

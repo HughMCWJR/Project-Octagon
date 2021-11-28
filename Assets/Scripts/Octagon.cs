@@ -142,7 +142,7 @@ public class Octagon : Tile
                                 chosenOctagon = (Octagon)rowOctagon.getNeighbors()[Main.SE];
                             }
 
-                            // Test octagon to see if it needs to be nuetralized
+                            // Test octagon to see if it needs to be neutralized
                             bool needsToBeNeutralized = true;
 
                             foreach (int squareIndex in chosenOctagon.getSquareNeighbors())
@@ -150,7 +150,13 @@ public class Octagon : Tile
 
                                 Square squareNeighbor = (Square)chosenOctagon.getNeighbors()[squareIndex];
 
-                                if (squareNeighbor.getBuilding() != Main.NONE && squareNeighbor.getBuilding() < Main.NUM_TYPE_BUILDINGS)
+                                if (chosenOctagon.owner == (main.getCurrentTurn() ? Main.LEFT_PLAYER : Main.RIGHT_PLAYER))
+                                {
+                                    needsToBeNeutralized = false;
+                                    break;
+                                }
+
+                                    if (squareNeighbor.getBuilding() != Main.NONE && squareNeighbor.getBuilding() < Main.NUM_TYPE_BUILDINGS && squareNeighbor.getOwner() == chosenOctagon.owner)
                                 {
 
                                     needsToBeNeutralized = false;
@@ -211,7 +217,7 @@ public class Octagon : Tile
 
         owner = newOwner;
 
-        SpriteRenderer srend = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        srend = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         switch (owner)
         {

@@ -1140,6 +1140,7 @@ MonoBehaviour:
   owner: 0
   leftPlayerColor: {r: 0, g: 0, b: 0, a: 0}
   rightPlayerColor: {r: 0, g: 0, b: 0, a: 0}
+  srend: {fileID: 0}
   sprites: []
 --- !u!1 &531482659
 GameObject:
@@ -2130,6 +2131,7 @@ MonoBehaviour:
   owner: 0
   leftPlayerColor: {r: 0, g: 0, b: 0, a: 0}
   rightPlayerColor: {r: 0, g: 0, b: 0, a: 0}
+  srend: {fileID: 0}
   sprites: []
 --- !u!212 &863693465
 SpriteRenderer:
@@ -6348,7 +6350,7 @@ MonoBehaviour:
   rightBunkers: {fileID: 1299283144}
   rightFactories: {fileID: 934893796}
   rightBarracks: {fileID: 99588794}
-  SELECTED_MAP: Map1_Gulch
+  SELECTED_MAP: Map2_Ridge
 --- !u!81 &2142078380
 AudioListener:
   m_ObjectHideFlags: 0
