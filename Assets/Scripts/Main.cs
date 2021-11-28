@@ -188,9 +188,9 @@ public class Main : MonoBehaviour
 
         // Instantiate player objects
         leftPlayer  = new Player(true);
-        leftPlayer.reinforcements = 2;
+        leftPlayer.reinforcements = 4;
         rightPlayer = new Player(false);
-        rightPlayer.reinforcements = 3;
+        rightPlayer.reinforcements = 6;
 
         // Set starting value for chosen building
         chosenBuilding = BARRACKS;
