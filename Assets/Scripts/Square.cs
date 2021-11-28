@@ -49,9 +49,9 @@ public class Square : Tile
 
                         if (main.tryBuild(main.getChosenBuilding()))
                         {
-
                             setBuilding(main.getChosenBuilding());
                             checkOwnership();
+                            main.updateBuildingCounters();
 
                         }
 
@@ -89,11 +89,11 @@ public class Square : Tile
 
                         if (main.tryUseArmory())
                         {
-
-                            main.updateBuildingCount(armoryUsingPlayer, building, false);
+                            main.updateBuildingCount(getOwner(), building, false);
                             setBuilding(Main.NONE);
                             setTerrain(Main.DESERT);
                             checkOwnership();
+                            main.updateBuildingCounters();
 
                         }
 
@@ -130,8 +130,22 @@ public class Square : Tile
 
                         if (main.tryUseReinforcement())
                         {
-                            setBuilding(Main.BUNKER);
-                            checkOwnership();
+                            if (checkSurrounded() > -1)
+                            {
+                                setBuilding(Main.BUNKER);
+                                if (main.getCurrentTurn())
+                                {
+                                    main.updateBuildingCount(1, 2, true); //For some reason, Main.BUNKER doesn't work here. So it's hardcoded
+                                } else
+                                {
+                                    main.updateBuildingCount(0, 2, true); //For some reason, Main.BUNKER doesn't work here. So it's hardcoded
+                                }
+                            } else
+                            {
+                                setBuilding(Main.BUNKER);
+                                checkOwnership();
+                            }
+                            main.updateBuildingCounters();
                         }
 
                     }
@@ -272,6 +286,12 @@ public class Square : Tile
                 surrounded = false;
                 break;
 
+            }
+
+            if (tile.Value.terrain == Main.CITY)
+            {
+                possiblePlayer = tile.Value.getOwner();
+                break;
             }
 
             if (possiblePlayer == Main.NO_ONE)

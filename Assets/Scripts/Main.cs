@@ -8,8 +8,8 @@ public class Main : MonoBehaviour
 {
 
     // Instantiate player objects
-    private Player leftPlayer;
-    private Player rightPlayer;
+    public Player leftPlayer;
+    public Player rightPlayer;
 
     // Constants for player ownership
     public const int NO_ONE = -1;
@@ -64,6 +64,11 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject Select_Mortar;
     //[SerializeField] private GameObject Select_Project;
 
+    // Factions
+    [SerializeField] private Sprite[] factionsIcons;
+    [SerializeField] private Color[] factionsColors;
+    [SerializeField] private GameObject currentFaction;
+    [SerializeField] private GameObject opposingFaction;
 
     // Chosen building for when trying to build
     private int chosenBuilding;
@@ -74,6 +79,18 @@ public class Main : MonoBehaviour
     [SerializeField] private Text secondaryMovesLeftText;
     [SerializeField] private Text tertiaryMovesLeftText;
     [SerializeField] private Text whosTurnText;
+
+    // Building Counters
+    [SerializeField] private Text leftMortars;
+    [SerializeField] private Text leftArmories;
+    [SerializeField] private Text leftBunkers;
+    [SerializeField] private Text leftFactories;
+    [SerializeField] private Text leftBarracks;
+    [SerializeField] private Text rightMortars;
+    [SerializeField] private Text rightArmories;
+    [SerializeField] private Text rightBunkers;
+    [SerializeField] private Text rightFactories;
+    [SerializeField] private Text rightBarracks;
 
     // Octagons
     // Key is position with x being from left side of layer, y being layers top to bottom
@@ -147,8 +164,12 @@ public class Main : MonoBehaviour
         // Instantiate player objects
         leftPlayer  = new Player(true);
         leftPlayer.reinforcements = 2;
+        leftPlayer.icon = factionsIcons[0]; //TEMP
+        leftPlayer.color = factionsColors[0]; //TEMP
         rightPlayer = new Player(false);
         rightPlayer.reinforcements = 3;
+        rightPlayer.icon = factionsIcons[1]; //TEMP
+        rightPlayer.color = factionsColors[1]; //TEMP
 
         // Set starting value for chosen building
         chosenBuilding = BARRACKS;
@@ -406,6 +427,9 @@ public class Main : MonoBehaviour
         leftPlayersTurn = !leftPlayersTurn;
 
         whosTurnText.text = leftPlayersTurn ? "Blue's Turn" : "Red's Turn";
+
+        // Update building counters
+        updateBuildingCounters();
 
         // Toggle needed and unneeded buttons
         attackButton.SetActive(true);
@@ -672,9 +696,11 @@ public class Main : MonoBehaviour
             {
                 case LEFT_PLAYER:
                     leftPlayer.changeBuildingCount(building, increase);
+                    updateBuildingCounters();
                     break;
                 case RIGHT_PLAYER:
                     rightPlayer.changeBuildingCount(building, increase);
+                    updateBuildingCounters();
                     break;
             }
 
@@ -741,7 +767,7 @@ public class Main : MonoBehaviour
     }
 
     // Returns current player taking turn
-    private Player getCurrentPlayer()
+    public Player getCurrentPlayer()
     {
         return leftPlayersTurn ? leftPlayer : rightPlayer;
     }
@@ -762,7 +788,7 @@ public class Main : MonoBehaviour
         return turnMode;
     }
 
-    private class Player
+    public class Player
     {
 
         // If this player is left player
@@ -770,7 +796,7 @@ public class Main : MonoBehaviour
 
         // Array of buildings owned
         // Meaning of indexes are declared as constants
-        private int[] numBuildings;
+        public int[] numBuildings;
 
         // Number of actions currently available
         private int attacks;
@@ -778,6 +804,10 @@ public class Main : MonoBehaviour
         private int builds;
         private int mortarAttacks;
         public int reinforcements;
+
+        // Faction
+        public Sprite icon;
+        public Color color;
 
         public Player(bool leftPlayer)
         {
@@ -836,7 +866,6 @@ public class Main : MonoBehaviour
         {
 
             numBuildings[building]++;
-
             return --builds;
 
         }
@@ -1079,6 +1108,22 @@ public class Main : MonoBehaviour
                 break;
         }
 
+    }
+
+    // Update Building Counters
+    // Updates every one of this player's building counters
+    public void updateBuildingCounters()
+    {
+        leftFactories.text = leftPlayer.numBuildings[0].ToString();
+        leftBarracks.text = leftPlayer.numBuildings[1].ToString();
+        leftBunkers.text = leftPlayer.numBuildings[2].ToString();
+        leftArmories.text = leftPlayer.numBuildings[3].ToString();
+        leftMortars.text = leftPlayer.numBuildings[4].ToString();
+        rightFactories.text = rightPlayer.numBuildings[0].ToString();
+        rightBarracks.text = rightPlayer.numBuildings[1].ToString();
+        rightBunkers.text = rightPlayer.numBuildings[2].ToString();
+        rightArmories.text = rightPlayer.numBuildings[3].ToString();
+        rightMortars.text = rightPlayer.numBuildings[4].ToString();
     }
 
 }
