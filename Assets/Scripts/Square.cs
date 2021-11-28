@@ -52,6 +52,7 @@ public class Square : Tile
                             setBuilding(main.getChosenBuilding());
                             checkOwnership();
                             main.updateBuildingCounters();
+                            main.playSound(main.buildClip);
 
                         }
 
@@ -94,6 +95,7 @@ public class Square : Tile
                             setTerrain(Main.DESERT);
                             checkOwnership();
                             main.updateBuildingCounters();
+                            main.playSound(main.explosionClip);
 
                         }
 
@@ -146,6 +148,7 @@ public class Square : Tile
                                 checkOwnership();
                             }
                             main.updateBuildingCounters();
+                            main.playSound(main.reinforceClip);
                         }
 
                     }

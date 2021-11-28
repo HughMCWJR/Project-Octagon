@@ -76,6 +76,7 @@ public class Octagon : Tile
                             if (main.tryClaimOctagon(attacksNeeded, terrain == Main.WATER ? attacksNeeded - 1 : -1))
                             {
 
+                                main.quietPlaySound(main.takeClip);
                                 setOwner(attackingPlayer);
 
                             }
@@ -87,6 +88,7 @@ public class Octagon : Tile
                             if (main.tryAttackOctagon(owner, findAttacksNeededToAttack()))
                             {
 
+                                main.quietPlaySound(main.neutralizeClip);
                                 setOwner(Main.NO_ONE);
 
                             }
@@ -103,6 +105,8 @@ public class Octagon : Tile
                 // Try and use the mortar on an octagon
                 if (main.getCurrentTurnCount() > 2 && main.tryUseMortar())
                 {
+
+                    main.playSound(main.mortarClip);
 
                     // For each octagon in a 3x3 area centered on this octagon,
                     // nuetralize each octagon without an owned building
@@ -170,6 +174,7 @@ public class Octagon : Tile
                             {
 
                                 chosenOctagon.setOwner(Main.NO_ONE);
+                                main.quietPlaySound(main.explosionDistantClip);
 
                             }
 

@@ -95,6 +95,21 @@ public class Main : MonoBehaviour
     [SerializeField] private Text rightFactories;
     [SerializeField] private Text rightBarracks;
 
+    // SFX
+    [SerializeField] public AudioClip takeClip = null;
+    [SerializeField] public AudioClip buildClip = null;
+    [SerializeField] public AudioClip buildingCaptureClip = null;
+    [SerializeField] public AudioClip explosionDistantClip = null;
+    [SerializeField] public AudioClip explosionClip = null;
+    [SerializeField] public AudioClip mortarClip = null;
+    [SerializeField] public AudioClip mouseOverClip = null;
+    [SerializeField] public AudioClip neutralizeClip = null;
+    [SerializeField] public AudioClip nextTurnClip = null;
+    [SerializeField] public AudioClip selectClip = null;
+    [SerializeField] public AudioClip reinforceClip = null;
+    [SerializeField] private AudioSource source = null;
+    [SerializeField] private AudioSource quietSource = null;
+
     // Octagons
     // Key is position with x being from left side of layer, y being layers top to bottom
     private Dictionary<Vector2, Octagon> octagons;
@@ -163,6 +178,13 @@ public class Main : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        // Sound
+        //source = GetComponent<AudioSource>();
+        if (source == null)
+        {
+            Debug.Log("Source is null");
+        }
 
         // Instantiate player objects
         leftPlayer  = new Player(true);
@@ -1124,6 +1146,16 @@ public class Main : MonoBehaviour
         rightBunkers.text = rightPlayer.numBuildings[2].ToString();
         rightArmories.text = rightPlayer.numBuildings[3].ToString();
         rightMortars.text = rightPlayer.numBuildings[4].ToString();
+    }
+
+    public void playSound(AudioClip clip)
+    {
+        source.PlayOneShot(clip);
+    }
+
+    public void quietPlaySound(AudioClip clip)
+    {
+        quietSource.PlayOneShot(clip);
     }
 
 }
