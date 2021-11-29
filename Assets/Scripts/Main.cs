@@ -169,14 +169,14 @@ public class Main : MonoBehaviour
 
     // TEMP
     // SELECTS MAP
-    [SerializeField] private  string SELECTED_MAP;
+    [SerializeField] private string SELECTED_MAP = "desert";
 
     // Constants for map indexes
     const int OCTAGON = 0;
     const int SQUARE  = 1;
 
-    // Start is called before the first frame update
-    void Start()
+    // Awake is called before the first frame update
+    public void Awake()
     {
 
         // Sound

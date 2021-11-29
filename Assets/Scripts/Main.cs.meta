@@ -37,7 +37,7 @@ MonoImporter:
   - rightBunkers: {instanceID: 0}
   - rightFactories: {instanceID: 0}
   - rightBarracks: {instanceID: 0}
-  executionOrder: 0
+  executionOrder: 100
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 
