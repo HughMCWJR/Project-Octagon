@@ -950,20 +950,17 @@ public class Main : MonoBehaviour
 
             try
             {
-                // Create an instance of StreamReader to read from a file.
-                // The using statement also closes the StreamReader.
-                using (StreamReader sr = new StreamReader("Assets/Map/" + mapName + ".txt"))
-                {
+                // Load map text files from resources
+                TextAsset txt = (TextAsset)Resources.Load("Map/" + mapName, typeof(TextAsset));
+                string content = txt.text;
 
-                    maps.Add(mapName, new string[2]);
+                maps.Add(mapName, new string[2]);
 
-                    // Read Octagon tile terrains
-                    maps[mapName][OCTAGON] = sr.ReadLine();
+                // Read Octagon tile terrains
+                maps[mapName][OCTAGON] = content.Split('\n')[0];
 
-                    // Read Square tile terrains
-                    maps[mapName][SQUARE] = sr.ReadLine();
-
-                }
+                // Read Square tile terrains
+                maps[mapName][SQUARE] = content.Split('\n')[1];
 
             }
             catch
